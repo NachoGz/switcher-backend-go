@@ -1,0 +1,15 @@
+-- +goose Up
+CREATE TABLE
+	games (
+		id UUID PRIMARY KEY,
+		name VARCHAR(255) NOT NULL,
+		max_players INT NOT NULL,
+		min_players INT NOT NULL,
+		is_private BOOLEAN NOT NULL DEFAULT FALSE,
+		password VARCHAR(255) DEFAULT NULL,
+		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);
+
+-- +goose Down
+DROP TABLE IF EXISTS games;

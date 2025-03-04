@@ -1,0 +1,16 @@
+-- +goose Up
+CREATE TABLE
+	players (
+		id UUID PRIMARY KEY,
+		name VARCHAR(255) NOT NULL,
+		turn VARCHAR(255) DEFAULT NULL,
+		game_id UUID references games (id) ON DELETE CASCADE,
+		game_state_id UUID references game_state (id) ON DELETE CASCADE,
+		host BOOLEAN NOT NULL DEFAULT FALSE,
+		winner BOOLEAN NOT NULL DEFAULT FALSE,
+		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		update_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);
+
+-- +goose Down
+DROP TABLE IF EXISTS players;
