@@ -12,6 +12,17 @@ import (
 	"github.com/google/uuid"
 )
 
+const countPlayers = `-- name: CountPlayers :one
+SELECT COUNT(*) FROM players WHERE game_id = $1
+`
+
+func (q *Queries) CountPlayers(ctx context.Context, gameID uuid.NullUUID) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countPlayers, gameID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createPlayer = `-- name: CreatePlayer :one
 INSERT INTO players (id, name, turn, game_id, game_state_id, host)
 VALUES ($1, $2, $3, $4, $5, $6)
