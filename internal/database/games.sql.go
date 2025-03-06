@@ -88,3 +88,25 @@ func (q *Queries) GetAvailableGames(ctx context.Context) ([]Game, error) {
 	}
 	return items, nil
 }
+
+const getGameById = `-- name: GetGameById :one
+SELECT id, name, max_players, min_players, is_private, password, created_at, updated_at
+FROM games
+WHERE id = $1
+`
+
+func (q *Queries) GetGameById(ctx context.Context, id uuid.UUID) (Game, error) {
+	row := q.db.QueryRowContext(ctx, getGameById, id)
+	var i Game
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.MaxPlayers,
+		&i.MinPlayers,
+		&i.IsPrivate,
+		&i.Password,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
