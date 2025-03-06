@@ -3,6 +3,8 @@ package game
 import (
 	"context"
 	"database/sql"
+	"log"
+	"strings"
 
 	"github.com/NachoGz/switcher-backend-go/internal/database"
 	gameState "github.com/NachoGz/switcher-backend-go/internal/game_state"
@@ -38,7 +40,9 @@ func NewService(
 }
 
 // GetAvailableGames gets all available games with player counts
-func (s *Service) GetAvailableGames(ctx context.Context, numPlayers int, page int, limit int) ([]Game, int, error) {
+func (s *Service) GetAvailableGames(ctx context.Context, numPlayers int, page int, limit int, name string) ([]Game, int, error) {
+	log.Println(numPlayers)
+	log.Println(name)
 	dbGames, err := s.gameRepo.GetAvailableGames(ctx)
 	if err != nil {
 		return nil, 0, err
@@ -51,11 +55,9 @@ func (s *Service) GetAvailableGames(ctx context.Context, numPlayers int, page in
 		game := s.DBToModel(ctx, dbGame)
 
 		// Filter by number of players if needed
-		if numPlayers > 0 && game.PlayersCount != numPlayers {
-			continue
+		if game.PlayersCount == numPlayers && strings.Contains(game.Name, name) {
+			filteredGames = append(filteredGames, game)
 		}
-
-		filteredGames = append(filteredGames, game)
 	}
 
 	// Calculate total count for pagination
@@ -138,4 +140,16 @@ func (s *Service) CreateGame(ctx context.Context, gameData Game, playerData play
 	resultPlayer := s.playerService.DBToModel(ctx, playerDb)
 
 	return &resultGame, &resultGameState, &resultPlayer, nil
+}
+
+// GetGameByID gets a game by its ID
+func (s *Service) GetGameByID(ctx context.Context, id uuid.UUID) (*Game, error) {
+	dbGame, err := s.gameRepo.GetGameById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	game := s.DBToModel(ctx, dbGame)
+
+	return &game, nil
 }
