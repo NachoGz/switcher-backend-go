@@ -8,9 +8,11 @@ import (
 
 	"github.com/NachoGz/switcher-backend-go/internal/database"
 	"github.com/NachoGz/switcher-backend-go/internal/game"
+	gameState "github.com/NachoGz/switcher-backend-go/internal/game_state"
 	"github.com/NachoGz/switcher-backend-go/internal/middleware"
+	"github.com/NachoGz/switcher-backend-go/internal/player"
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pq" // PostgreSQL driver
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -35,22 +37,35 @@ func main() {
 	}
 	defer dbConn.Close()
 
+	// Create database queries
 	dbQueries := database.New(dbConn)
-	cfg := &middleware.ApiConfig{
-		DB: dbQueries,
-	}
 
+	// Create repositories
+	gameRepo := game.NewGameRepository(dbQueries)
+	gameStateRepo := gameState.NewGameStateRepository(dbQueries)
+	playerRepo := player.NewPlayerRepository(dbQueries)
+
+	// Create services
+	gameStateService := gameState.NewService(gameStateRepo)
+	playerService := player.NewService(playerRepo)
+	gameService := game.NewService(gameRepo, gameStateRepo, playerRepo, gameStateService, playerService)
+
+	// Create handlers
+	gameHandlers := game.NewHandlers(gameService)
+
+	// Configure routes
 	mux := http.NewServeMux()
 
-	// Handlers
-	mux.HandleFunc("POST /games", game.HandleCreateGame)
+	// Game routes
+	mux.HandleFunc("POST /games", gameHandlers.HandleCreateGame)
+	mux.HandleFunc("GET /games", gameHandlers.HandleGetGames)
 
-	// Wrap mux with CORS middleware
-	handler := middleware.WithConfig(cfg)(mux)
-	handler = middleware.CORSMiddleware(handler)
+	// Add middleware
+	handler := middleware.CORSMiddleware(mux)
 
+	// Start server
 	srv := &http.Server{
-		Addr:    ":" + port, // Listen on port 8080
+		Addr:    ":" + port,
 		Handler: handler,
 	}
 
