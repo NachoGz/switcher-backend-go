@@ -4,11 +4,13 @@ import (
 	"context"
 
 	"github.com/NachoGz/switcher-backend-go/internal/database"
+	"github.com/google/uuid"
 )
 
 type GameRepository interface {
 	CreateGame(ctx context.Context, params database.CreateGameParams) (database.Game, error)
 	GetAvailableGames(ctx context.Context) ([]database.Game, error)
+	GetGameById(ctx context.Context, id uuid.UUID) (database.Game, error)
 }
 
 // PostgresGameRepository implements GameRepository for Postgres
@@ -31,4 +33,8 @@ func (r *PostgresGameRepository) CreateGame(ctx context.Context, params database
 // GetAvailableGames gets all available games
 func (r *PostgresGameRepository) GetAvailableGames(ctx context.Context) ([]database.Game, error) {
 	return r.queries.GetAvailableGames(ctx)
+}
+
+func (r PostgresGameRepository) GetGameById(ctx context.Context, id uuid.UUID) (database.Game, error) {
+	return r.queries.GetGameById(ctx, id)
 }
