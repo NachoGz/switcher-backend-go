@@ -59,6 +59,7 @@ func main() {
 	// Game routes
 	mux.HandleFunc("POST /games", gameHandlers.HandleCreateGame)
 	mux.HandleFunc("GET /games", gameHandlers.HandleGetGames)
+	mux.HandleFunc("GET /games/{gameID}", gameHandlers.HandleGetGameByID)
 
 	// Add middleware
 	handler := middleware.CORSMiddleware(mux)
