@@ -7,11 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type PlayerRepository interface {
-	CreatePlayer(ctx context.Context, params database.CreatePlayerParams) (database.Player, error)
-	CountPlayers(ctx context.Context, gameID uuid.NullUUID) (int64, error)
-}
-
 // PostgresPlayerRepository implements PlayerRepository for Postgres
 type PostgresPlayerRepository struct {
 	queries *database.Queries

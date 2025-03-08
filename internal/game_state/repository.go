@@ -6,10 +6,6 @@ import (
 	"github.com/NachoGz/switcher-backend-go/internal/database"
 )
 
-type GameStateRepository interface {
-	CreateGameState(ctx context.Context, params database.CreateGameStateParams) (database.GameState, error)
-}
-
 // PostgresGameStateRepository implements GameStateRepository for Postgres
 type PostgresGameStateRepository struct {
 	queries *database.Queries
