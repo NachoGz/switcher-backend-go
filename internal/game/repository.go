@@ -7,12 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type GameRepository interface {
-	CreateGame(ctx context.Context, params database.CreateGameParams) (database.Game, error)
-	GetAvailableGames(ctx context.Context) ([]database.Game, error)
-	GetGameById(ctx context.Context, id uuid.UUID) (database.Game, error)
-}
-
 // PostgresGameRepository implements GameRepository for Postgres
 type PostgresGameRepository struct {
 	queries *database.Queries
