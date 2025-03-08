@@ -18,8 +18,8 @@ type Service struct {
 	gameRepo         GameRepository
 	gameStateRepo    gameState.GameStateRepository
 	playerRepo       player.PlayerRepository
-	gameStateService *gameState.Service
-	playerService    *player.Service
+	gameStateService gameState.GameStateService
+	playerService    player.PlayerService
 }
 
 // NewService creates a new game service
@@ -27,8 +27,8 @@ func NewService(
 	gameRepo GameRepository,
 	gameStateRepo gameState.GameStateRepository,
 	playerRepo player.PlayerRepository,
-	gameStateService *gameState.Service,
-	playerService *player.Service,
+	gameStateService gameState.GameStateService,
+	playerService player.PlayerService,
 ) *Service {
 	return &Service{
 		gameRepo:         gameRepo,
@@ -38,6 +38,9 @@ func NewService(
 		playerService:    playerService,
 	}
 }
+
+// Ensure Service implements GameService
+var _ GameService = (*Service)(nil)
 
 // GetAvailableGames gets all available games with player counts
 func (s *Service) GetAvailableGames(ctx context.Context, numPlayers int, page int, limit int, name string) ([]Game, int, error) {
