@@ -13,11 +13,11 @@ import (
 
 // Handlers struct holds handlers with service dependency
 type Handlers struct {
-	service *Service
+	service GameService
 }
 
 // NewHandlers creates a new handlers instance
-func NewHandlers(service *Service) *Handlers {
+func NewHandlers(service GameService) *Handlers {
 	return &Handlers{service: service}
 }
 
@@ -37,7 +37,7 @@ func (h *Handlers) HandleCreateGame(w http.ResponseWriter, r *http.Request) {
 
 	// Use service to create game
 	game, newGameState, newPlayer, err := h.service.CreateGame(r.Context(), params.Game, params.Player)
-	if err != nil {
+	if err != nil || game == nil || newGameState == nil || newPlayer == nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, "Error creating game", err)
 		return
 	}
