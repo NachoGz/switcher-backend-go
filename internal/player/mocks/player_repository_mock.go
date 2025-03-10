@@ -23,3 +23,15 @@ func (m *MockPlayerRepository) CountPlayers(ctx context.Context, gameID uuid.Nul
 	args := m.Called(ctx, gameID)
 	return args.Get(0).(int64), args.Error(1)
 }
+
+// GetPlayers fetches all the players in a game
+func (m *MockPlayerRepository) GetPlayers(ctx context.Context, gameID uuid.NullUUID) ([]database.Player, error) {
+	args := m.Called(ctx, gameID)
+	return args.Get(0).([]database.Player), args.Error(1)
+}
+
+// AssignTurnPlayer
+func (m *MockPlayerRepository) AssignTurnPlayer(ctx context.Context, params database.AssignTurnPlayerParams) error {
+	args := m.Called(ctx, params)
+	return args.Error(1)
+}
