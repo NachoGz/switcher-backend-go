@@ -56,7 +56,7 @@ func TestCreateGame(t *testing.T) {
 	// Setup database response for game state
 	dbGameState := database.GameState{
 		ID:     gameStateID,
-		State:  gameState.WAITING,
+		State:  string(gameState.WAITING),
 		GameID: uuid.NullUUID{UUID: gameID, Valid: true},
 	}
 
@@ -77,7 +77,7 @@ func TestCreateGame(t *testing.T) {
 
 	// Setup expectations for game state
 	mockGameStateRepo.On("CreateGameState", mock.Anything, mock.MatchedBy(func(params database.CreateGameStateParams) bool {
-		return params.State == gameState.WAITING &&
+		return params.State == string(gameState.WAITING) &&
 			params.GameID.UUID == gameID
 	})).Return(dbGameState, nil)
 
