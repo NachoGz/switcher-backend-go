@@ -12,6 +12,22 @@ import (
 	"github.com/google/uuid"
 )
 
+const assignTurnPlayer = `-- name: AssignTurnPlayer :exec
+UPDATE players
+SET turn=$2, updated_at = NOW()
+WHERE id=$1
+`
+
+type AssignTurnPlayerParams struct {
+	ID   uuid.UUID
+	Turn sql.NullString
+}
+
+func (q *Queries) AssignTurnPlayer(ctx context.Context, arg AssignTurnPlayerParams) error {
+	_, err := q.db.ExecContext(ctx, assignTurnPlayer, arg.ID, arg.Turn)
+	return err
+}
+
 const countPlayers = `-- name: CountPlayers :one
 SELECT COUNT(*) FROM players WHERE game_id = $1
 `
@@ -60,4 +76,43 @@ func (q *Queries) CreatePlayer(ctx context.Context, arg CreatePlayerParams) (Pla
 		&i.UpdateAt,
 	)
 	return i, err
+}
+
+const getPlayers = `-- name: GetPlayers :many
+SELECT id, name, turn, game_id, game_state_id, host, winner, created_at, update_at
+FROM players
+WHERE game_id=$1
+`
+
+func (q *Queries) GetPlayers(ctx context.Context, gameID uuid.NullUUID) ([]Player, error) {
+	rows, err := q.db.QueryContext(ctx, getPlayers, gameID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Player
+	for rows.Next() {
+		var i Player
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Turn,
+			&i.GameID,
+			&i.GameStateID,
+			&i.Host,
+			&i.Winner,
+			&i.CreatedAt,
+			&i.UpdateAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
