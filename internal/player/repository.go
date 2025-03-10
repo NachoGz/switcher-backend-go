@@ -28,3 +28,13 @@ func (r *PostgresPlayerRepository) CreatePlayer(ctx context.Context, params data
 func (r *PostgresPlayerRepository) CountPlayers(ctx context.Context, gameID uuid.NullUUID) (int64, error) {
 	return r.queries.CountPlayers(ctx, gameID)
 }
+
+// GetPlayers fetches all the players in a game
+func (r *PostgresPlayerRepository) GetPlayers(ctx context.Context, gameID uuid.NullUUID) ([]database.Player, error) {
+	return r.queries.GetPlayers(ctx, gameID)
+}
+
+// AssignTurnPlayer sets the turn for the given player
+func (r *PostgresPlayerRepository) AssignTurnPlayer(ctx context.Context, params database.AssignTurnPlayerParams) error {
+	return r.queries.AssignTurnPlayer(ctx, params)
+}
