@@ -22,3 +22,11 @@ func NewGameStateRepository(queries *database.Queries) GameStateRepository {
 func (r *PostgresGameStateRepository) CreateGameState(ctx context.Context, params database.CreateGameStateParams) (database.GameState, error) {
 	return r.queries.CreateGameState(ctx, params)
 }
+
+func (r *PostgresGameStateRepository) UpdateGameState(ctx context.Context, params database.UpdateGameStateParams) error {
+	return r.queries.UpdateGameState(ctx, params)
+}
+
+func (r *PostgresGameStateRepository) UpdateCurrentPlayer(ctx context.Context, params database.UpdateCurrentPlayerParams) error {
+	return r.queries.UpdateCurrentPlayer(ctx, params)
+}
