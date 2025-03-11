@@ -6,14 +6,18 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/NachoGz/switcher-backend-go/internal/board"
+	"github.com/NachoGz/switcher-backend-go/internal/movementCards"
 	"github.com/NachoGz/switcher-backend-go/internal/player"
 	"github.com/NachoGz/switcher-backend-go/internal/utils"
 	"github.com/google/uuid"
 )
 
 type Handlers struct {
-	service       GameStateService
-	playerService player.PlayerService
+	service             GameStateService
+	playerService       player.PlayerService
+	boardService        board.BoardService
+	movementCardService movementCards.MovementCardService
 }
 
 // NewHandlers creates a new handlers instance
@@ -53,5 +57,16 @@ func (h *Handlers) HandleStartGame(w http.ResponseWriter, r *http.Request) {
 	h.service.UpdateCurrentPlayer(context.Background(), params.GameID, firstPlayerID)
 
 	// Create board and decks for players
+	err = h.boardService.ConfigureBoard(context.Background(), params.GameID)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, "Error configuring board", err)
+		return
+	}
+
+	err = h.movementCardService.CreateMovementDeck(context.Background(), params.GameID)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, "Error creating movement cards deck", err)
+		return
+	}
 
 }
