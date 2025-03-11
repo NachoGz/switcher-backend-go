@@ -46,7 +46,7 @@ func main() {
 	playerRepo := player.NewPlayerRepository(dbQueries)
 
 	// Create services
-	gameStateService := gameState.NewService(gameStateRepo)
+	gameStateService := gameState.NewService(gameStateRepo, playerRepo)
 	playerService := player.NewService(playerRepo)
 	gameService := game.NewService(gameRepo, gameStateRepo, playerRepo, gameStateService, playerService)
 
