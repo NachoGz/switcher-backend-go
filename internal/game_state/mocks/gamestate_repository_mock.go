@@ -1,4 +1,4 @@
-package gamestate_mock
+package gameState_mock
 
 import (
 	"context"

@@ -33,7 +33,7 @@ func (s *Service) CreateGameState(ctx context.Context, gameStateData GameState) 
 	gameState, err := s.gameStateRepo.CreateGameState(ctx, database.CreateGameStateParams{
 		ID:              gameStateData.ID,
 		State:           string(gameStateData.State),
-		GameID:          uuid.NullUUID{UUID: gameStateData.GameID},
+		GameID:          gameStateData.GameID,
 		CurrentPlayerID: uuid.NullUUID{UUID: gameStateData.CurrentPlayerID},
 		ForbiddenColor:  gameStateData.ForbiddenColor,
 	})
@@ -48,7 +48,7 @@ func (s *Service) CreateGameState(ctx context.Context, gameStateData GameState) 
 
 func (s *Service) UpdateGameState(ctx context.Context, gameID uuid.UUID, state State) error {
 	err := s.gameStateRepo.UpdateGameState(ctx, database.UpdateGameStateParams{
-		GameID: uuid.NullUUID{UUID: gameID},
+		GameID: gameID,
 		State:  string(state),
 	})
 	if err != nil {
@@ -60,7 +60,7 @@ func (s *Service) UpdateGameState(ctx context.Context, gameID uuid.UUID, state S
 
 func (s *Service) UpdateCurrentPlayer(ctx context.Context, gameID uuid.UUID, currentPlayerID uuid.UUID) error {
 	err := s.gameStateRepo.UpdateCurrentPlayer(ctx, database.UpdateCurrentPlayerParams{
-		GameID:          uuid.NullUUID{UUID: gameID},
+		GameID:          gameID,
 		CurrentPlayerID: uuid.NullUUID{UUID: currentPlayerID},
 	})
 	if err != nil {

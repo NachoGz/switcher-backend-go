@@ -30,8 +30,8 @@ func (s *Service) CreatePlayer(ctx context.Context, playerData Player) (*Player,
 		ID:          playerData.ID,
 		Name:        playerData.Name,
 		Turn:        sql.NullString{String: string(playerData.Turn)},
-		GameID:      uuid.NullUUID{UUID: playerData.GameID},
-		GameStateID: uuid.NullUUID{UUID: playerData.GameStateID},
+		GameID:      playerData.GameID,
+		GameStateID: playerData.GameStateID,
 		Host:        playerData.Host,
 	})
 	if err != nil {
@@ -43,7 +43,7 @@ func (s *Service) CreatePlayer(ctx context.Context, playerData Player) (*Player,
 	return &resultPlayer, nil
 }
 
-func (s *Service) GetPlayers(ctx context.Context, gameID uuid.NullUUID) ([]Player, error) {
+func (s *Service) GetPlayers(ctx context.Context, gameID uuid.UUID) ([]Player, error) {
 	players, err := s.playerRepo.GetPlayers(ctx, gameID)
 	if err != nil {
 		return nil, err

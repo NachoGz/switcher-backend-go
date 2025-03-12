@@ -30,7 +30,7 @@ func (s *Service) DBToModel(ctx context.Context, dbGameState database.GameState)
 	return GameState{
 		ID:              dbGameState.ID,
 		State:           State(dbGameState.State),
-		GameID:          dbGameState.GameID.UUID,
+		GameID:          dbGameState.GameID,
 		CurrentPlayerID: dbGameState.CurrentPlayerID.UUID,
 		ForbiddenColor:  dbGameState.ForbiddenColor,
 	}

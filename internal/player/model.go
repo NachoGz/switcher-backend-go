@@ -32,8 +32,8 @@ func (s *Service) DBToModel(ctx context.Context, dbPlayer database.Player) Playe
 		ID:          dbPlayer.ID,
 		Name:        dbPlayer.Name,
 		Turn:        TurnEnum(dbPlayer.Turn.String),
-		GameID:      dbPlayer.GameID.UUID,
-		GameStateID: dbPlayer.GameStateID.UUID,
+		GameID:      dbPlayer.GameID,
+		GameStateID: dbPlayer.GameStateID,
 		Host:        dbPlayer.Host,
 	}
 }

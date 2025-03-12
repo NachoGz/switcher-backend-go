@@ -25,12 +25,12 @@ func (r *PostgresPlayerRepository) CreatePlayer(ctx context.Context, params data
 }
 
 // CountPlayers counts players for a game
-func (r *PostgresPlayerRepository) CountPlayers(ctx context.Context, gameID uuid.NullUUID) (int64, error) {
+func (r *PostgresPlayerRepository) CountPlayers(ctx context.Context, gameID uuid.UUID) (int64, error) {
 	return r.queries.CountPlayers(ctx, gameID)
 }
 
 // GetPlayers fetches all the players in a game
-func (r *PostgresPlayerRepository) GetPlayers(ctx context.Context, gameID uuid.NullUUID) ([]database.Player, error) {
+func (r *PostgresPlayerRepository) GetPlayers(ctx context.Context, gameID uuid.UUID) ([]database.Player, error) {
 	return r.queries.GetPlayers(ctx, gameID)
 }
 

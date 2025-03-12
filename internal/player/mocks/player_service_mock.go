@@ -26,7 +26,7 @@ func (m *MockPlayerService) CreatePlayer(ctx context.Context, playerData player.
 	return args.Get(0).(*player.Player), args.Error(1)
 }
 
-func (m *MockPlayerService) GetPlayers(ctx context.Context, gameID uuid.NullUUID) ([]player.Player, error) {
+func (m *MockPlayerService) GetPlayers(ctx context.Context, gameID uuid.UUID) ([]player.Player, error) {
 	args := m.Called(ctx, gameID)
 	return args.Get(0).([]player.Player), args.Error(1)
 }
