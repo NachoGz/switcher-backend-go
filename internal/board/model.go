@@ -1,7 +1,7 @@
 package board
 
 import (
-	"github.com/NachoGz/switcher-backend-go/internal/figureCards"
+	"github.com/NachoGz/switcher-backend-go/internal/figureCard"
 	"github.com/google/uuid"
 )
 
@@ -23,12 +23,12 @@ type Box struct {
 }
 
 type BoxOut struct {
-	Color       ColorEnum             `json:"color"`
-	PosX        int                   `json:"pos_x"`
-	PosY        int                   `json:"pos_y"`
-	Highlighted bool                  `json:"highlighted"`
-	FigureID    *uuid.UUID            `json:"figure_id"`
-	FigureType  *figureCards.TypeEnum `json:"figure_type"`
+	Color       ColorEnum            `json:"color"`
+	PosX        int                  `json:"pos_x"`
+	PosY        int                  `json:"pos_y"`
+	Highlighted bool                 `json:"highlighted"`
+	FigureID    *uuid.UUID           `json:"figure_id"`
+	FigureType  *figureCard.TypeEnum `json:"figure_type"`
 }
 
 type Board struct {
