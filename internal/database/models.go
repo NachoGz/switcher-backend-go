@@ -34,8 +34,8 @@ type FigureCard struct {
 	ID          uuid.UUID
 	Show        bool
 	Difficulty  string
-	PlayerID    uuid.NullUUID
-	GameID      uuid.NullUUID
+	PlayerID    uuid.UUID
+	GameID      uuid.UUID
 	Type        string
 	Blocked     bool
 	SoftBlocked bool
@@ -55,7 +55,7 @@ type Game struct {
 type GameState struct {
 	ID              uuid.UUID
 	State           string
-	GameID          uuid.NullUUID
+	GameID          uuid.UUID
 	CurrentPlayerID uuid.NullUUID
 	ForbiddenColor  sql.NullString
 	CreatedAt       time.Time
@@ -76,8 +76,8 @@ type Player struct {
 	ID          uuid.UUID
 	Name        string
 	Turn        sql.NullString
-	GameID      uuid.NullUUID
-	GameStateID uuid.NullUUID
+	GameID      uuid.UUID
+	GameStateID uuid.UUID
 	Host        bool
 	Winner      bool
 	CreatedAt   time.Time

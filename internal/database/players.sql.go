@@ -32,7 +32,7 @@ const countPlayers = `-- name: CountPlayers :one
 SELECT COUNT(*) FROM players WHERE game_id = $1
 `
 
-func (q *Queries) CountPlayers(ctx context.Context, gameID uuid.NullUUID) (int64, error) {
+func (q *Queries) CountPlayers(ctx context.Context, gameID uuid.UUID) (int64, error) {
 	row := q.db.QueryRowContext(ctx, countPlayers, gameID)
 	var count int64
 	err := row.Scan(&count)
@@ -49,8 +49,8 @@ type CreatePlayerParams struct {
 	ID          uuid.UUID
 	Name        string
 	Turn        sql.NullString
-	GameID      uuid.NullUUID
-	GameStateID uuid.NullUUID
+	GameID      uuid.UUID
+	GameStateID uuid.UUID
 	Host        bool
 }
 
@@ -84,7 +84,7 @@ FROM players
 WHERE game_id=$1
 `
 
-func (q *Queries) GetPlayers(ctx context.Context, gameID uuid.NullUUID) ([]Player, error) {
+func (q *Queries) GetPlayers(ctx context.Context, gameID uuid.UUID) ([]Player, error) {
 	rows, err := q.db.QueryContext(ctx, getPlayers, gameID)
 	if err != nil {
 		return nil, err

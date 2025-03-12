@@ -21,7 +21,7 @@ RETURNING id, state, game_id, current_player_id, forbidden_color, created_at, up
 type CreateGameStateParams struct {
 	ID              uuid.UUID
 	State           string
-	GameID          uuid.NullUUID
+	GameID          uuid.UUID
 	CurrentPlayerID uuid.NullUUID
 	ForbiddenColor  sql.NullString
 }
@@ -54,7 +54,7 @@ WHERE game_id=$1
 `
 
 type UpdateCurrentPlayerParams struct {
-	GameID          uuid.NullUUID
+	GameID          uuid.UUID
 	CurrentPlayerID uuid.NullUUID
 }
 
@@ -70,7 +70,7 @@ WHERE game_id=$1
 `
 
 type UpdateGameStateParams struct {
-	GameID uuid.NullUUID
+	GameID uuid.UUID
 	State  string
 }
 
