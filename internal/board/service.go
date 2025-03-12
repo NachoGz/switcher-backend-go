@@ -65,7 +65,7 @@ func (s *Service) ConfigureBoard(ctx context.Context, gameID uuid.UUID) error {
 	// Create each box
 	for i, color := range colors {
 		posX := i % 6
-		posY := i // 6
+		posY := i / 6
 
 		_, err := s.boardRepo.AddBoxToBoard(ctx, database.AddBoxToBoardParams{
 			ID:        uuid.New(),
