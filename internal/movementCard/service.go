@@ -1,4 +1,4 @@
-package movementCards
+package movementCard
 
 import (
 	"context"
@@ -80,7 +80,7 @@ func (s *Service) CreateMovementDeck(ctx context.Context, gameID uuid.UUID) erro
 	}
 
 	// assign 3 to each player
-	players, err := s.playerRepo.GetPlayers(ctx, uuid.NullUUID{UUID: gameID, Valid: true})
+	players, err := s.playerRepo.GetPlayers(ctx, gameID)
 	if err != nil {
 		return fmt.Errorf("failed to get players: %w", err)
 	}

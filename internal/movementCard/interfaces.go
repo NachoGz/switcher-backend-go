@@ -1,4 +1,4 @@
-package movementCards
+package movementCard
 
 import (
 	"context"
