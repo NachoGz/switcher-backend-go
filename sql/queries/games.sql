@@ -7,7 +7,7 @@ RETURNING *;
 SELECT games.*
 FROM games
 JOIN game_state ON games.id = game_state.game_id
-WHERE game_state.state = 'WAITING';
+WHERE game_state.state = 'waiting';
 
 -- name: GetGameById :one
 SELECT *
