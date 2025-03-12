@@ -57,15 +57,15 @@ func TestCreateGame(t *testing.T) {
 	dbGameState := database.GameState{
 		ID:     gameStateID,
 		State:  string(gameState.WAITING),
-		GameID: uuid.NullUUID{UUID: gameID, Valid: true},
+		GameID: gameID,
 	}
 
 	// Setup database response for player
 	dbPlayer := database.Player{
 		ID:          playerID,
 		Name:        "Player1",
-		GameID:      uuid.NullUUID{UUID: gameID, Valid: true},
-		GameStateID: uuid.NullUUID{UUID: gameStateID, Valid: true},
+		GameID:      gameID,
+		GameStateID: gameStateID,
 	}
 
 	// Use mock.MatchedBy to match parameters regardless of UUID
@@ -78,19 +78,19 @@ func TestCreateGame(t *testing.T) {
 	// Setup expectations for game state
 	mockGameStateRepo.On("CreateGameState", mock.Anything, mock.MatchedBy(func(params database.CreateGameStateParams) bool {
 		return params.State == string(gameState.WAITING) &&
-			params.GameID.UUID == gameID
+			params.GameID == gameID
 	})).Return(dbGameState, nil)
 
 	// Setup expectations for player
 	mockPlayerRepo.On("CreatePlayer", mock.Anything, mock.MatchedBy(func(params database.CreatePlayerParams) bool {
 		return params.Name == testPlayer.Name &&
-			params.GameID.UUID == gameID &&
-			params.GameStateID.UUID == gameStateID
+			params.GameID == gameID &&
+			params.GameStateID == gameStateID
 	})).Return(dbPlayer, nil)
 
 	// Set up player count for the DBToModel call
-	mockPlayerRepo.On("CountPlayers", mock.Anything, mock.MatchedBy(func(g uuid.NullUUID) bool {
-		return g.UUID == gameID
+	mockPlayerRepo.On("CountPlayers", mock.Anything, mock.MatchedBy(func(g uuid.UUID) bool {
+		return g == gameID
 	})).Return(int64(1), nil)
 
 	mockGameStateService.On("DBToModel", mock.Anything, dbGameState).Return(gameState.GameState{

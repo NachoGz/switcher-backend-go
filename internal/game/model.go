@@ -20,7 +20,7 @@ type Game struct {
 // DBToModel converts a database game to a model game with player count
 func (s *Service) DBToModel(ctx context.Context, dbGame database.Game) Game {
 	playersCount := 0
-	if count, err := s.playerRepo.CountPlayers(ctx, uuid.NullUUID{UUID: dbGame.ID, Valid: true}); err == nil {
+	if count, err := s.playerRepo.CountPlayers(ctx, dbGame.ID); err == nil {
 		playersCount = int(count)
 	}
 

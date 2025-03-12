@@ -111,7 +111,7 @@ func (s *Service) CreateGame(ctx context.Context, gameData Game, playerData play
 	gameStateDb, err := s.gameStateRepo.CreateGameState(ctx, database.CreateGameStateParams{
 		ID:              uuid.New(),
 		State:           string(gameState.WAITING),
-		GameID:          uuid.NullUUID{UUID: game.ID, Valid: true},
+		GameID:          game.ID,
 		CurrentPlayerID: uuid.NullUUID{Valid: false},
 		ForbiddenColor:  sql.NullString{Valid: false},
 	})
@@ -124,8 +124,8 @@ func (s *Service) CreateGame(ctx context.Context, gameData Game, playerData play
 		ID:          uuid.New(),
 		Name:        playerData.Name,
 		Turn:        sql.NullString{String: string(playerData.Turn), Valid: playerData.Turn != ""},
-		GameID:      uuid.NullUUID{UUID: game.ID, Valid: true},
-		GameStateID: uuid.NullUUID{UUID: gameStateDb.ID, Valid: true},
+		GameID:      game.ID,
+		GameStateID: gameStateDb.ID,
 		Host:        playerData.Host,
 	})
 	if err != nil {
