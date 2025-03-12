@@ -7,7 +7,8 @@ import (
 	"net/http"
 
 	"github.com/NachoGz/switcher-backend-go/internal/board"
-	"github.com/NachoGz/switcher-backend-go/internal/movementCards"
+	"github.com/NachoGz/switcher-backend-go/internal/figureCard"
+	"github.com/NachoGz/switcher-backend-go/internal/movementCard"
 	"github.com/NachoGz/switcher-backend-go/internal/player"
 	"github.com/NachoGz/switcher-backend-go/internal/utils"
 	"github.com/google/uuid"
@@ -17,7 +18,8 @@ type Handlers struct {
 	service             GameStateService
 	playerService       player.PlayerService
 	boardService        board.BoardService
-	movementCardService movementCards.MovementCardService
+	movementCardService movementCard.MovementCardService
+	figureCardService   figureCard.FigureCardService
 }
 
 // NewHandlers creates a new handlers instance
@@ -40,7 +42,7 @@ func (h *Handlers) HandleStartGame(w http.ResponseWriter, r *http.Request) {
 	// Update state to playing
 	h.service.UpdateGameState(context.Background(), params.GameID, PLAYING)
 
-	players, err := h.playerService.GetPlayers(context.Background(), uuid.NullUUID{UUID: params.GameID})
+	players, err := h.playerService.GetPlayers(context.Background(), params.GameID)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, "Error fetching games", err)
 		return
@@ -69,4 +71,9 @@ func (h *Handlers) HandleStartGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err = h.figureCardService.CreateFigureCardDeck(context.Background(), params.GameID)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, "Error creating figure cards deck", err)
+		return
+	}
 }
