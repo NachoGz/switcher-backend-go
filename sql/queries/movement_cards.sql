@@ -21,7 +21,7 @@ VALUES
 	)
 RETURNING *;
 
--- name: GetMovementDeck :many
+-- name: GetMovementCardDeck :many
 SELECT *
 FROM movement_cards
 WHERE game_id = $1 AND player_id != None;

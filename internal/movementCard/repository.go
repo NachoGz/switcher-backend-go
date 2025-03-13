@@ -25,8 +25,8 @@ func (r *PostgresMovementCardRepository) CreateMovementCard(ctx context.Context,
 }
 
 // GetMovementDeck fetches the movement cards for a given game
-func (r *PostgresMovementCardRepository) GetMovementDeck(ctx context.Context, gameID uuid.UUID) ([]database.MovementCard, error) {
-	return r.queries.GetMovementDeck(ctx, gameID)
+func (r *PostgresMovementCardRepository) GetMovementCardDeck(ctx context.Context, gameID uuid.UUID) ([]database.MovementCard, error) {
+	return r.queries.GetMovementCardDeck(ctx, gameID)
 }
 
 // AssignMovementCard assigns the movement card to the given player

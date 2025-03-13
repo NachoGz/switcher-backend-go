@@ -28,7 +28,7 @@ func NewService(
 	}
 }
 
-func (s *Service) CreateMovementDeck(ctx context.Context, gameID uuid.UUID) error {
+func (s *Service) CreateMovementCardDeck(ctx context.Context, gameID uuid.UUID) error {
 	// Create a list with the types of movement cards
 	typesList := make([]TypeEnum, 0, 40)
 	for i := 0; i < 6; i++ {
@@ -86,7 +86,7 @@ func (s *Service) CreateMovementDeck(ctx context.Context, gameID uuid.UUID) erro
 	}
 
 	for _, player := range players {
-		movDeck, err := s.movementCardRepo.GetMovementDeck(context.Background(), gameID)
+		movDeck, err := s.movementCardRepo.GetMovementCardDeck(context.Background(), gameID)
 		if err != nil {
 			return fmt.Errorf("failed to get movement deck: %w", err)
 		}

@@ -9,10 +9,10 @@ import (
 
 type MovementCardRepository interface {
 	CreateMovementCard(ctx context.Context, params database.CreateMovementCardParams) (database.MovementCard, error)
-	GetMovementDeck(ctx context.Context, gameID uuid.UUID) ([]database.MovementCard, error)
+	GetMovementCardDeck(ctx context.Context, gameID uuid.UUID) ([]database.MovementCard, error)
 	AssignMovementCard(ctx context.Context, params database.AssignMovementCardParams) error
 }
 
 type MovementCardService interface {
-	CreateMovementDeck(ctx context.Context, gameID uuid.UUID) error
+	CreateMovementCardDeck(ctx context.Context, gameID uuid.UUID) error
 }
