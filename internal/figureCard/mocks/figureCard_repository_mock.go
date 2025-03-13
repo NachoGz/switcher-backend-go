@@ -1,4 +1,4 @@
-package figure_card_mock
+package figureCard_mock
 
 import (
 	"context"
