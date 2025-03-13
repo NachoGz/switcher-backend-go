@@ -85,14 +85,14 @@ func (q *Queries) CreateMovementCard(ctx context.Context, arg CreateMovementCard
 	return i, err
 }
 
-const getMovementDeck = `-- name: GetMovementDeck :many
+const getMovementCardDeck = `-- name: GetMovementCardDeck :many
 SELECT id, description, used, player_id, game_id, type, position
 FROM movement_cards
 WHERE game_id = $1 AND player_id != None
 `
 
-func (q *Queries) GetMovementDeck(ctx context.Context, gameID uuid.UUID) ([]MovementCard, error) {
-	rows, err := q.db.QueryContext(ctx, getMovementDeck, gameID)
+func (q *Queries) GetMovementCardDeck(ctx context.Context, gameID uuid.UUID) ([]MovementCard, error) {
+	rows, err := q.db.QueryContext(ctx, getMovementCardDeck, gameID)
 	if err != nil {
 		return nil, err
 	}
