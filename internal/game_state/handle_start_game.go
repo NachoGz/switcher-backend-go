@@ -2,7 +2,6 @@ package gameState
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"net/http"
 
@@ -15,7 +14,7 @@ import (
 )
 
 type Handlers struct {
-	service             GameStateService
+	gameStateService    GameStateService
 	playerService       player.PlayerService
 	boardService        board.BoardService
 	movementCardService movementCard.MovementCardService
@@ -23,28 +22,32 @@ type Handlers struct {
 }
 
 // NewHandlers creates a new handlers instance
-func NewHandlers(service GameStateService) *Handlers {
-	return &Handlers{service: service}
+func NewHandlers(gameStateService GameStateService, playerService player.PlayerService,
+	boardService board.BoardService, movementCardService movementCard.MovementCardService,
+	figureCardService figureCard.FigureCardService) *Handlers {
+	return &Handlers{
+		gameStateService:    gameStateService,
+		playerService:       playerService,
+		boardService:        boardService,
+		movementCardService: movementCardService,
+		figureCardService:   figureCardService,
+	}
 }
 
 func (h *Handlers) HandleStartGame(w http.ResponseWriter, r *http.Request) {
 	log.Println("Starting game...")
-	type StartGameParams struct {
-		GameID uuid.UUID `json:"game_id"`
-	}
-
-	var params StartGameParams
-	if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request body", err)
+	gameID, err := uuid.Parse(r.PathValue("gameID"))
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "Couldn't parse game ID", err)
 		return
 	}
 
 	// Update state to playing
-	h.service.UpdateGameState(context.Background(), params.GameID, PLAYING)
+	h.gameStateService.UpdateGameState(context.Background(), gameID, PLAYING)
 
-	players, err := h.playerService.GetPlayers(context.Background(), params.GameID)
+	players, err := h.playerService.GetPlayers(context.Background(), gameID)
 	if err != nil {
-		utils.RespondWithError(w, http.StatusInternalServerError, "Error fetching games", err)
+		utils.RespondWithError(w, http.StatusInternalServerError, "Error fetching players", err)
 		return
 	}
 
@@ -56,22 +59,26 @@ func (h *Handlers) HandleStartGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Set current player
-	h.service.UpdateCurrentPlayer(context.Background(), params.GameID, firstPlayerID)
+	err = h.gameStateService.UpdateCurrentPlayer(context.Background(), gameID, firstPlayerID)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, "Error updating current player", err)
+		return
+	}
 
 	// Create board and decks for players
-	err = h.boardService.ConfigureBoard(context.Background(), params.GameID)
+	err = h.boardService.ConfigureBoard(context.Background(), gameID)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, "Error configuring board", err)
 		return
 	}
 
-	err = h.movementCardService.CreateMovementDeck(context.Background(), params.GameID)
+	err = h.movementCardService.CreateMovementCardDeck(context.Background(), gameID)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, "Error creating movement cards deck", err)
 		return
 	}
 
-	err = h.figureCardService.CreateFigureCardDeck(context.Background(), params.GameID)
+	err = h.figureCardService.CreateFigureCardDeck(context.Background(), gameID)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, "Error creating figure cards deck", err)
 		return
