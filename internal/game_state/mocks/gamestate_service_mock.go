@@ -28,10 +28,10 @@ func (m *MockGameStateService) CreateGameState(ctx context.Context, gameStateDat
 
 func (m *MockGameStateService) UpdateGameState(ctx context.Context, gameID uuid.UUID, state gameState.State) error {
 	args := m.Called(ctx, gameID, state)
-	return args.Error(1)
+	return args.Error(0)
 }
 
 func (m *MockGameStateService) UpdateCurrentPlayer(ctx context.Context, gameID uuid.UUID, currentPlayerID uuid.UUID) error {
 	args := m.Called(ctx, gameID, currentPlayerID)
-	return args.Error(1)
+	return args.Error(0)
 }
