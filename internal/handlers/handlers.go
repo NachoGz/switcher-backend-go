@@ -48,9 +48,10 @@ type PlayerHandlers struct {
 }
 
 // NewHandlers creates a new handlers instance
-func NewPlayerHandlers(playerService player.PlayerService, gameService game.GameService) *PlayerHandlers {
+func NewPlayerHandlers(playerService player.PlayerService, gameService game.GameService, gameStateService gameState.GameStateService) *PlayerHandlers {
 	return &PlayerHandlers{
-		playerService: playerService,
-		gameService:   gameService,
+		playerService:    playerService,
+		gameService:      gameService,
+		gameStateService: gameStateService,
 	}
 }
