@@ -43,7 +43,11 @@ func (h *Handlers) HandleStartGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Update state to playing
-	h.gameStateService.UpdateGameState(context.Background(), gameID, PLAYING)
+	err = h.gameStateService.UpdateGameState(context.Background(), gameID, PLAYING)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, "Error updating game state", err)
+		return
+	}
 
 	players, err := h.playerService.GetPlayers(context.Background(), gameID)
 	if err != nil {
@@ -74,13 +78,17 @@ func (h *Handlers) HandleStartGame(w http.ResponseWriter, r *http.Request) {
 
 	err = h.movementCardService.CreateMovementCardDeck(context.Background(), gameID)
 	if err != nil {
-		utils.RespondWithError(w, http.StatusInternalServerError, "Error creating movement cards deck", err)
+		utils.RespondWithError(w, http.StatusInternalServerError, "Error creating movement card deck", err)
 		return
 	}
 
 	err = h.figureCardService.CreateFigureCardDeck(context.Background(), gameID)
 	if err != nil {
-		utils.RespondWithError(w, http.StatusInternalServerError, "Error creating figure cards deck", err)
+		utils.RespondWithError(w, http.StatusInternalServerError, "Error creating figure card deck", err)
 		return
 	}
+
+	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"message": "Game started successfully",
+	})
 }
