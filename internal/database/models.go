@@ -33,7 +33,7 @@ type Box struct {
 type FigureCard struct {
 	ID          uuid.UUID
 	Show        bool
-	Difficulty  string
+	Difficulty  sql.NullString
 	PlayerID    uuid.UUID
 	GameID      uuid.UUID
 	Type        string
@@ -81,5 +81,5 @@ type Player struct {
 	Host        bool
 	Winner      bool
 	CreatedAt   time.Time
-	UpdateAt    time.Time
+	UpdatedAt   time.Time
 }

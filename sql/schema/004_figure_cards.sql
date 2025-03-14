@@ -3,7 +3,7 @@ CREATE TABLE
 	figure_cards (
 		id UUID PRIMARY KEY,
 		show BOOLEAN NOT NULL,
-		difficulty VARCHAR(256) NOT NULL,
+		difficulty VARCHAR(256),
 		player_id UUID references players (id) ON DELETE CASCADE NOT NULL,
 		game_id UUID references games (id) ON DELETE CASCADE NOT NULL,
 		type VARCHAR(256) NOT NULL,
