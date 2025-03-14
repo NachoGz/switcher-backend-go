@@ -11,6 +11,7 @@ import (
 	"github.com/NachoGz/switcher-backend-go/internal/figureCard"
 	"github.com/NachoGz/switcher-backend-go/internal/game"
 	gameState "github.com/NachoGz/switcher-backend-go/internal/game_state"
+	"github.com/NachoGz/switcher-backend-go/internal/handlers"
 	"github.com/NachoGz/switcher-backend-go/internal/middleware"
 	"github.com/NachoGz/switcher-backend-go/internal/movementCard"
 	"github.com/NachoGz/switcher-backend-go/internal/player"
@@ -60,8 +61,8 @@ func main() {
 	figureCardService := figureCard.NewService(figureCardRepo, playerRepo)
 
 	// Create handlers
-	gameHandlers := game.NewHandlers(gameService)
-	gameStateHandlers := gameState.NewHandlers(gameStateService, playerService, boardService, movementCardService, figureCardService)
+	gameHandlers := handlers.NewGameHandlers(gameService)
+	gameStateHandlers := handlers.NewGameStateHandlers(gameStateService, playerService, boardService, movementCardService, figureCardService)
 
 	// Configure routes
 	mux := http.NewServeMux()
