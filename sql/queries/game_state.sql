@@ -12,3 +12,8 @@ WHERE game_id=$1;
 UPDATE game_state
 SET current_player_id=$2
 WHERE game_id=$1;
+
+-- name: GetGameStateByGameID :one
+SELECT *
+FROM game_state
+WHERE game_id=$1;

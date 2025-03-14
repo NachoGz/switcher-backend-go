@@ -47,6 +47,27 @@ func (q *Queries) CreateGameState(ctx context.Context, arg CreateGameStateParams
 	return i, err
 }
 
+const getGameStateByGameID = `-- name: GetGameStateByGameID :one
+SELECT id, state, game_id, current_player_id, forbidden_color, created_at, updated_at
+FROM game_state
+WHERE game_id=$1
+`
+
+func (q *Queries) GetGameStateByGameID(ctx context.Context, gameID uuid.UUID) (GameState, error) {
+	row := q.db.QueryRowContext(ctx, getGameStateByGameID, gameID)
+	var i GameState
+	err := row.Scan(
+		&i.ID,
+		&i.State,
+		&i.GameID,
+		&i.CurrentPlayerID,
+		&i.ForbiddenColor,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const updateCurrentPlayer = `-- name: UpdateCurrentPlayer :exec
 UPDATE game_state
 SET current_player_id=$2

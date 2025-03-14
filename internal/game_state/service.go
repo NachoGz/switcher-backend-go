@@ -69,3 +69,14 @@ func (s *Service) UpdateCurrentPlayer(ctx context.Context, gameID uuid.UUID, cur
 
 	return nil
 }
+
+func (s *Service) GetGameStateByGameID(ctx context.Context, gameID uuid.UUID) (*GameState, error) {
+	gameStateDB, err := s.gameStateRepo.GetGameStateByGameID(ctx, gameID)
+	if err != nil {
+		return nil, err
+	}
+
+	gameState := s.DBToModel(ctx, gameStateDB)
+
+	return &gameState, nil
+}
