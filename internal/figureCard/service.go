@@ -2,6 +2,7 @@ package figureCard
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -33,11 +34,12 @@ func NewService(
 var _ FigureCardService = (*Service)(nil)
 
 func (s *Service) CreateFigureCardDeck(ctx context.Context, gameID uuid.UUID) error {
-	// Create a list with card types
-	var hardCards []TypeEnum
-	var easyCards []TypeEnum
-
 	typesList := GetAllCardTypes()
+
+	// Create a list with card types
+	hardCards := make([]TypeEnum, 0, AMOUNT_HARD_CARDS)
+	easyCards := make([]TypeEnum, 0, AMOUNT_EASY_CARDS)
+
 	// Filter cards based on their name
 	for _, card := range typesList {
 		cardName := string(card)
@@ -65,6 +67,14 @@ func (s *Service) CreateFigureCardDeck(ctx context.Context, gameID uuid.UUID) er
 	hardCardsPerPlayer := 36 / len(players)
 	easyCardsPerPlayer := 14 / len(players)
 
+	// Check bounds
+	if hardCardsPerPlayer > len(hardCards) {
+		hardCardsPerPlayer = len(hardCards)
+	}
+	if easyCardsPerPlayer > len(easyCards) {
+		easyCardsPerPlayer = len(easyCards)
+	}
+
 	for _, player := range players {
 		// Shuffle the lists
 		rand.Shuffle(len(hardCards), func(i, j int) {
@@ -86,6 +96,11 @@ func (s *Service) CreateFigureCardDeck(ctx context.Context, gameID uuid.UUID) er
 			if i == SHOW_LIMIT {
 				show = false
 			}
+			difficulty := HARD
+			if strings.HasPrefix(string(figure), "FIGE") {
+				difficulty = EASY
+			}
+
 			_, err := s.figureCardRepo.CreateFigureCard(ctx, database.CreateFigureCardParams{
 				ID:          uuid.New(),
 				Show:        show,
@@ -94,6 +109,7 @@ func (s *Service) CreateFigureCardDeck(ctx context.Context, gameID uuid.UUID) er
 				Type:        string(figure),
 				Blocked:     false,
 				SoftBlocked: false,
+				Difficulty:  sql.NullString{String: string(difficulty), Valid: true},
 			})
 			if err != nil {
 				return fmt.Errorf("failed to create figure card: %w", err)
