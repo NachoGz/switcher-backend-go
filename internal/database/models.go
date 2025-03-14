@@ -11,6 +11,36 @@ import (
 	"github.com/google/uuid"
 )
 
+type Board struct {
+	ID        uuid.UUID
+	GameID    uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type Box struct {
+	ID         uuid.UUID
+	Color      string
+	PosX       int32
+	PosY       int32
+	GameID     uuid.UUID
+	BoardID    uuid.UUID
+	Highlight  bool
+	FigureID   uuid.NullUUID
+	FigureType sql.NullString
+}
+
+type FigureCard struct {
+	ID          uuid.UUID
+	Show        bool
+	Difficulty  string
+	PlayerID    uuid.UUID
+	GameID      uuid.UUID
+	Type        string
+	Blocked     bool
+	SoftBlocked bool
+}
+
 type Game struct {
 	ID         uuid.UUID
 	Name       string
@@ -25,19 +55,29 @@ type Game struct {
 type GameState struct {
 	ID              uuid.UUID
 	State           string
-	GameID          uuid.NullUUID
+	GameID          uuid.UUID
 	CurrentPlayerID uuid.NullUUID
 	ForbiddenColor  sql.NullString
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
 }
 
+type MovementCard struct {
+	ID          uuid.UUID
+	Description string
+	Used        bool
+	PlayerID    uuid.NullUUID
+	GameID      uuid.UUID
+	Type        string
+	Position    sql.NullInt32
+}
+
 type Player struct {
 	ID          uuid.UUID
 	Name        string
 	Turn        sql.NullString
-	GameID      uuid.NullUUID
-	GameStateID uuid.NullUUID
+	GameID      uuid.UUID
+	GameStateID uuid.UUID
 	Host        bool
 	Winner      bool
 	CreatedAt   time.Time

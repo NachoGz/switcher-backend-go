@@ -54,7 +54,7 @@ const getAvailableGames = `-- name: GetAvailableGames :many
 SELECT games.id, games.name, games.max_players, games.min_players, games.is_private, games.password, games.created_at, games.updated_at
 FROM games
 JOIN game_state ON games.id = game_state.game_id
-WHERE game_state.state = 'WAITING'
+WHERE game_state.state = 'waiting'
 `
 
 func (q *Queries) GetAvailableGames(ctx context.Context) ([]Game, error) {

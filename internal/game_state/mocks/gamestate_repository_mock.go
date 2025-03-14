@@ -1,4 +1,4 @@
-package gamestate_mock
+package gameState_mock
 
 import (
 	"context"
@@ -14,4 +14,14 @@ type MockGameStateRepository struct {
 func (m *MockGameStateRepository) CreateGameState(ctx context.Context, params database.CreateGameStateParams) (database.GameState, error) {
 	args := m.Called(ctx, params)
 	return args.Get(0).(database.GameState), args.Error(1)
+}
+
+func (m *MockGameStateRepository) UpdateGameState(ctx context.Context, params database.UpdateGameStateParams) error {
+	args := m.Called(ctx, params)
+	return args.Error(1)
+}
+
+func (m *MockGameStateRepository) UpdateCurrentPlayer(ctx context.Context, params database.UpdateCurrentPlayerParams) error {
+	args := m.Called(ctx, params)
+	return args.Error(1)
 }

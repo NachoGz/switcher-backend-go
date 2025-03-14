@@ -1,10 +1,11 @@
-package gamestate_mock
+package gameState_mock
 
 import (
 	"context"
 
 	"github.com/NachoGz/switcher-backend-go/internal/database"
 	gameState "github.com/NachoGz/switcher-backend-go/internal/game_state"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -23,4 +24,14 @@ func (m *MockGameStateService) CreateGameState(ctx context.Context, gameStateDat
 		return nil, args.Error(1)
 	}
 	return args.Get(0).(*gameState.GameState), args.Error(1)
+}
+
+func (m *MockGameStateService) UpdateGameState(ctx context.Context, gameID uuid.UUID, state gameState.State) error {
+	args := m.Called(ctx, gameID, state)
+	return args.Error(0)
+}
+
+func (m *MockGameStateService) UpdateCurrentPlayer(ctx context.Context, gameID uuid.UUID, currentPlayerID uuid.UUID) error {
+	args := m.Called(ctx, gameID, currentPlayerID)
+	return args.Error(0)
 }

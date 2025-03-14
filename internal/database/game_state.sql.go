@@ -21,7 +21,7 @@ RETURNING id, state, game_id, current_player_id, forbidden_color, created_at, up
 type CreateGameStateParams struct {
 	ID              uuid.UUID
 	State           string
-	GameID          uuid.NullUUID
+	GameID          uuid.UUID
 	CurrentPlayerID uuid.NullUUID
 	ForbiddenColor  sql.NullString
 }
@@ -45,4 +45,36 @@ func (q *Queries) CreateGameState(ctx context.Context, arg CreateGameStateParams
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const updateCurrentPlayer = `-- name: UpdateCurrentPlayer :exec
+UPDATE game_state
+SET current_player_id=$2
+WHERE game_id=$1
+`
+
+type UpdateCurrentPlayerParams struct {
+	GameID          uuid.UUID
+	CurrentPlayerID uuid.NullUUID
+}
+
+func (q *Queries) UpdateCurrentPlayer(ctx context.Context, arg UpdateCurrentPlayerParams) error {
+	_, err := q.db.ExecContext(ctx, updateCurrentPlayer, arg.GameID, arg.CurrentPlayerID)
+	return err
+}
+
+const updateGameState = `-- name: UpdateGameState :exec
+UPDATE game_state
+SET state=$2
+WHERE game_id=$1
+`
+
+type UpdateGameStateParams struct {
+	GameID uuid.UUID
+	State  string
+}
+
+func (q *Queries) UpdateGameState(ctx context.Context, arg UpdateGameStateParams) error {
+	_, err := q.db.ExecContext(ctx, updateGameState, arg.GameID, arg.State)
+	return err
 }

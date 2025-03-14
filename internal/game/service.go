@@ -3,7 +3,6 @@ package game
 import (
 	"context"
 	"database/sql"
-	"log"
 	"strings"
 
 	"github.com/NachoGz/switcher-backend-go/internal/database"
@@ -44,8 +43,6 @@ var _ GameService = (*Service)(nil)
 
 // GetAvailableGames gets all available games with player counts
 func (s *Service) GetAvailableGames(ctx context.Context, numPlayers int, page int, limit int, name string) ([]Game, int, error) {
-	log.Println(numPlayers)
-	log.Println(name)
 	dbGames, err := s.gameRepo.GetAvailableGames(ctx)
 	if err != nil {
 		return nil, 0, err
@@ -113,8 +110,8 @@ func (s *Service) CreateGame(ctx context.Context, gameData Game, playerData play
 	// Create game state using repository
 	gameStateDb, err := s.gameStateRepo.CreateGameState(ctx, database.CreateGameStateParams{
 		ID:              uuid.New(),
-		State:           gameState.WAITING,
-		GameID:          uuid.NullUUID{UUID: game.ID, Valid: true},
+		State:           string(gameState.WAITING),
+		GameID:          game.ID,
 		CurrentPlayerID: uuid.NullUUID{Valid: false},
 		ForbiddenColor:  sql.NullString{Valid: false},
 	})
@@ -126,9 +123,9 @@ func (s *Service) CreateGame(ctx context.Context, gameData Game, playerData play
 	playerDb, err := s.playerRepo.CreatePlayer(ctx, database.CreatePlayerParams{
 		ID:          uuid.New(),
 		Name:        playerData.Name,
-		Turn:        sql.NullString{String: playerData.Turn, Valid: playerData.Turn != ""},
-		GameID:      uuid.NullUUID{UUID: game.ID, Valid: true},
-		GameStateID: uuid.NullUUID{UUID: gameStateDb.ID, Valid: true},
+		Turn:        sql.NullString{String: string(playerData.Turn), Valid: playerData.Turn != ""},
+		GameID:      game.ID,
+		GameStateID: gameStateDb.ID,
 		Host:        playerData.Host,
 	})
 	if err != nil {
