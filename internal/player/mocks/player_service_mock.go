@@ -37,7 +37,7 @@ func (m *MockPlayerService) AssignRandomTurns(ctx context.Context, players []pla
 }
 
 // CountPlayers counts players for a game
-func (m *MockPlayerService) CountPlayers(ctx context.Context, gameID uuid.UUID) (int64, error) {
+func (m *MockPlayerService) CountPlayers(ctx context.Context, gameID uuid.UUID) (int, error) {
 	args := m.Called(ctx, gameID)
-	return args.Get(0).(int64), args.Error(1)
+	return args.Get(0).(int), args.Error(1)
 }

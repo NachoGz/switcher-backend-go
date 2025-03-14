@@ -12,7 +12,7 @@ type PlayerService interface {
 	DBToModel(ctx context.Context, dbPlayer database.Player) Player
 	GetPlayers(ctx context.Context, gameID uuid.UUID) ([]Player, error)
 	AssignRandomTurns(ctx context.Context, players []Player) (uuid.UUID, error)
-	CountPlayers(ctx context.Context, gameID uuid.UUID) (int64, error)
+	CountPlayers(ctx context.Context, gameID uuid.UUID) (int, error)
 }
 
 type PlayerRepository interface {
