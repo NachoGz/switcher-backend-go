@@ -24,7 +24,7 @@ RETURNING *;
 -- name: GetMovementCardDeck :many
 SELECT *
 FROM movement_cards
-WHERE game_id = $1 AND player_id != None;
+WHERE game_id = $1 AND player_id IS NULL;
 
 -- name: AssignMovementCard :exec
 UPDATE movement_cards
