@@ -111,3 +111,12 @@ func (s *Service) AssignRandomTurns(ctx context.Context, players []Player) (uuid
 
 	return firstPlayer.ID, nil
 }
+
+func (s *Service) CountPlayers(ctx context.Context, gameID uuid.UUID) (int64, error) {
+	amountOfPlayers, err := s.playerRepo.CountPlayers(ctx, gameID)
+	if err != nil {
+		return 0, err
+	}
+
+	return amountOfPlayers, nil
+}
