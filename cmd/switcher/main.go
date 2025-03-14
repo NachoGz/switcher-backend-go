@@ -63,7 +63,7 @@ func main() {
 	// Create handlers
 	gameHandlers := handlers.NewGameHandlers(gameService)
 	gameStateHandlers := handlers.NewGameStateHandlers(gameStateService, playerService, boardService, movementCardService, figureCardService)
-
+	playerHandlers := handlers.NewPlayerHandlers(playerService, gameService, gameStateService)
 	// Configure routes
 	mux := http.NewServeMux()
 
@@ -72,6 +72,7 @@ func main() {
 	mux.HandleFunc("GET /games", gameHandlers.HandleGetGames)
 	mux.HandleFunc("GET /games/{gameID}", gameHandlers.HandleGetGameByID)
 	mux.HandleFunc("PATCH /games/start/{gameID}", gameStateHandlers.HandleStartGame)
+	mux.HandleFunc("POST /games/join/{gameID}", playerHandlers.HandleJoinGame)
 
 	// Add middleware
 	handler := middleware.CORSMiddleware(mux)
