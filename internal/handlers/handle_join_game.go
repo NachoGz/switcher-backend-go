@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (h *PlayerHandlers) HandleStartGame(w http.ResponseWriter, r *http.Request) {
+func (h *PlayerHandlers) HandleJoinGame(w http.ResponseWriter, r *http.Request) {
 	log.Println("Joining game...")
 
 	type PlayerJoinRequest struct {
@@ -71,7 +71,6 @@ func (h *PlayerHandlers) HandleStartGame(w http.ResponseWriter, r *http.Request)
 
 	// Create player
 	_, err = h.playerService.CreatePlayer(context.Background(), player.Player{
-		ID:          uuid.New(),
 		Name:        params.PlayerName,
 		GameID:      gameID,
 		GameStateID: gameState.ID,
@@ -82,7 +81,7 @@ func (h *PlayerHandlers) HandleStartGame(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]interface{}{
 		"message": "Joined game successfully",
 	})
 }
