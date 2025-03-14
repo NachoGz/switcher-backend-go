@@ -53,6 +53,8 @@ const (
 )
 
 const SHOW_LIMIT = 3
+const AMOUNT_HARD_CARDS = 18
+const AMOUNT_EASY_CARDS = 7
 
 type FigureCard struct {
 	ID          uuid.UUID `json:"id"`
@@ -70,7 +72,7 @@ func (s *Service) DBToModel(ctx context.Context, dbFigureCard database.FigureCar
 	return FigureCard{
 		ID:          dbFigureCard.ID,
 		Type:        TypeEnum(dbFigureCard.Type),
-		Difficulty:  dbFigureCard.Difficulty,
+		Difficulty:  dbFigureCard.Difficulty.String,
 		Show:        dbFigureCard.Show,
 		PlayerID:    dbFigureCard.PlayerID,
 		GameID:      dbFigureCard.GameID,

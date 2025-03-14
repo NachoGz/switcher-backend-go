@@ -42,7 +42,7 @@ func (q *Queries) CountPlayers(ctx context.Context, gameID uuid.UUID) (int64, er
 const createPlayer = `-- name: CreatePlayer :one
 INSERT INTO players (id, name, turn, game_id, game_state_id, host)
 VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING id, name, turn, game_id, game_state_id, host, winner, created_at, update_at
+RETURNING id, name, turn, game_id, game_state_id, host, winner, created_at, updated_at
 `
 
 type CreatePlayerParams struct {
@@ -73,13 +73,13 @@ func (q *Queries) CreatePlayer(ctx context.Context, arg CreatePlayerParams) (Pla
 		&i.Host,
 		&i.Winner,
 		&i.CreatedAt,
-		&i.UpdateAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
 
 const getPlayers = `-- name: GetPlayers :many
-SELECT id, name, turn, game_id, game_state_id, host, winner, created_at, update_at
+SELECT id, name, turn, game_id, game_state_id, host, winner, created_at, updated_at
 FROM players
 WHERE game_id=$1
 `
@@ -102,7 +102,7 @@ func (q *Queries) GetPlayers(ctx context.Context, gameID uuid.UUID) ([]Player, e
 			&i.Host,
 			&i.Winner,
 			&i.CreatedAt,
-			&i.UpdateAt,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}

@@ -70,6 +70,7 @@ func (s *Service) ConfigureBoard(ctx context.Context, gameID uuid.UUID) error {
 		_, err := s.boardRepo.AddBoxToBoard(ctx, database.AddBoxToBoardParams{
 			ID:        uuid.New(),
 			BoardID:   newBoard.ID,
+			GameID:    gameID,
 			Color:     string(color),
 			PosX:      int32(posX),
 			PosY:      int32(posY),

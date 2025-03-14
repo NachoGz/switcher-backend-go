@@ -7,15 +7,16 @@ package database
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/google/uuid"
 )
 
 const createFigureCard = `-- name: CreateFigureCard :one
 INSERT INTO
-	figure_cards (id, show, player_id, game_id, type, blocked, soft_blocked)
+	figure_cards (id, show, player_id, game_id, type, blocked, soft_blocked, difficulty)
 VALUES
-	($1, $2, $3, $4, $5, $6 ,$7)
+	($1, $2, $3, $4, $5, $6 , $7, $8)
 RETURNING id, show, difficulty, player_id, game_id, type, blocked, soft_blocked
 `
 
@@ -27,6 +28,7 @@ type CreateFigureCardParams struct {
 	Type        string
 	Blocked     bool
 	SoftBlocked bool
+	Difficulty  sql.NullString
 }
 
 func (q *Queries) CreateFigureCard(ctx context.Context, arg CreateFigureCardParams) (FigureCard, error) {
@@ -38,6 +40,7 @@ func (q *Queries) CreateFigureCard(ctx context.Context, arg CreateFigureCardPara
 		arg.Type,
 		arg.Blocked,
 		arg.SoftBlocked,
+		arg.Difficulty,
 	)
 	var i FigureCard
 	err := row.Scan(

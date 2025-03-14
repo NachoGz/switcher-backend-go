@@ -88,7 +88,7 @@ func (q *Queries) CreateMovementCard(ctx context.Context, arg CreateMovementCard
 const getMovementCardDeck = `-- name: GetMovementCardDeck :many
 SELECT id, description, used, player_id, game_id, type, position
 FROM movement_cards
-WHERE game_id = $1 AND player_id != None
+WHERE game_id = $1 AND player_id IS NULL
 `
 
 func (q *Queries) GetMovementCardDeck(ctx context.Context, gameID uuid.UUID) ([]MovementCard, error) {
