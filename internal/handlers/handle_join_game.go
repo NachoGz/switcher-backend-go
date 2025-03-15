@@ -49,17 +49,15 @@ func (h *PlayerHandlers) HandleJoinGame(w http.ResponseWriter, r *http.Request) 
 
 	if game.IsPrivate && game.Password != nil {
 		storedPasswordHash := game.Password
-		log.Println("Stored password hash:", storedPasswordHash)
-		log.Println("Entered password:", params.Password)
-
 		// No password entered
 		if params.Password == nil {
 			utils.RespondWithError(w, http.StatusForbidden, "Password required for private games", err)
 			return
 		}
 
-		if err := utils.CheckPasswordHash(*params.Password, *game.Password); err != nil {
+		if err := utils.CheckPasswordHash(*storedPasswordHash, *params.Password); err != nil {
 			utils.RespondWithError(w, http.StatusForbidden, "Incorrect password", err)
+			return
 		}
 	}
 
