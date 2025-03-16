@@ -101,7 +101,7 @@ func TestHandleStartGame_Success(t *testing.T) {
 	mockFigureCardService.AssertExpectations(t)
 }
 
-func TestHandleStartGame_InvalidRequestBody(t *testing.T) {
+func TestHandleStartGame_InvalidGameID(t *testing.T) {
 	// Setup mock
 	mockGameStateService := new(gameState_mock.MockGameStateService)
 	mockPlayerService := new(player_mock.MockPlayerService)
