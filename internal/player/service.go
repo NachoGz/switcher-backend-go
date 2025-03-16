@@ -27,7 +27,7 @@ func NewService(
 
 func (s *Service) CreatePlayer(ctx context.Context, playerData Player) (*Player, error) {
 	player, err := s.playerRepo.CreatePlayer(ctx, database.CreatePlayerParams{
-		ID:          playerData.ID,
+		ID:          uuid.New(),
 		Name:        playerData.Name,
 		Turn:        sql.NullString{String: string(playerData.Turn)},
 		GameID:      playerData.GameID,
@@ -110,4 +110,13 @@ func (s *Service) AssignRandomTurns(ctx context.Context, players []Player) (uuid
 	}
 
 	return firstPlayer.ID, nil
+}
+
+func (s *Service) CountPlayers(ctx context.Context, gameID uuid.UUID) (int, error) {
+	amountOfPlayers, err := s.playerRepo.CountPlayers(ctx, gameID)
+	if err != nil {
+		return 0, err
+	}
+
+	return int(amountOfPlayers), nil
 }

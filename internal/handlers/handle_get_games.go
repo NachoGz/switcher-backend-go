@@ -1,4 +1,4 @@
-package game
+package handlers
 
 import (
 	"log"
@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (h *Handlers) HandleGetGames(w http.ResponseWriter, r *http.Request) {
+func (h *GameHandlers) HandleGetGames(w http.ResponseWriter, r *http.Request) {
 	log.Println("Getting games")
 
 	// Parse pagination parameters
@@ -48,7 +48,7 @@ func (h *Handlers) HandleGetGames(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
 
 	// Use service to get games
-	games, total, err := h.service.GetAvailableGames(r.Context(), numPlayers, page, limit, name)
+	games, total, err := h.gameService.GetAvailableGames(r.Context(), numPlayers, page, limit, name)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, "Error getting games", err)
 		return
@@ -66,7 +66,7 @@ func (h *Handlers) HandleGetGames(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (h *Handlers) HandleGetGameByID(w http.ResponseWriter, r *http.Request) {
+func (h *GameHandlers) HandleGetGameByID(w http.ResponseWriter, r *http.Request) {
 	gameID, err := uuid.Parse(r.PathValue("gameID"))
 	if err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, "Couldn't parse game ID", err)
@@ -76,7 +76,7 @@ func (h *Handlers) HandleGetGameByID(w http.ResponseWriter, r *http.Request) {
 	log.Println("Getting game with ID: ", gameID)
 
 	// Use service to get game
-	game, err := h.service.GetGameByID(r.Context(), gameID)
+	game, err := h.gameService.GetGameByID(r.Context(), gameID)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, "Error getting game", err)
 		return

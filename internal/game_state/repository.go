@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/NachoGz/switcher-backend-go/internal/database"
+	"github.com/google/uuid"
 )
 
 // PostgresGameStateRepository implements GameStateRepository for Postgres
@@ -29,4 +30,8 @@ func (r *PostgresGameStateRepository) UpdateGameState(ctx context.Context, param
 
 func (r *PostgresGameStateRepository) UpdateCurrentPlayer(ctx context.Context, params database.UpdateCurrentPlayerParams) error {
 	return r.queries.UpdateCurrentPlayer(ctx, params)
+}
+
+func (r *PostgresGameStateRepository) GetGameStateByGameID(ctx context.Context, gameID uuid.UUID) (database.GameState, error) {
+	return r.queries.GetGameStateByGameID(ctx, gameID)
 }

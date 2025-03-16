@@ -1,4 +1,4 @@
-package gameState_test
+package handlers_test
 
 import (
 	"encoding/json"
@@ -11,6 +11,7 @@ import (
 	figureCard_mock "github.com/NachoGz/switcher-backend-go/internal/figureCard/mocks"
 	gameState "github.com/NachoGz/switcher-backend-go/internal/game_state"
 	gameState_mock "github.com/NachoGz/switcher-backend-go/internal/game_state/mocks"
+	"github.com/NachoGz/switcher-backend-go/internal/handlers"
 	movementCard_mock "github.com/NachoGz/switcher-backend-go/internal/movementCard/mocks"
 
 	"github.com/NachoGz/switcher-backend-go/internal/player"
@@ -71,7 +72,7 @@ func TestHandleStartGame_Success(t *testing.T) {
 		Return(nil)
 
 	// Create handlers
-	handlers := gameState.NewHandlers(mockGameStateService, mockPlayerService, mockBoardService, mockMovementCardService, mockFigureCardService)
+	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService, mockBoardService, mockMovementCardService, mockFigureCardService)
 
 	// Create request
 	req, _ := http.NewRequest(http.MethodPatch, "/games/start/", nil)
@@ -100,7 +101,7 @@ func TestHandleStartGame_Success(t *testing.T) {
 	mockFigureCardService.AssertExpectations(t)
 }
 
-func TestHandleStartGame_InvalidRequestBody(t *testing.T) {
+func TestHandleStartGame_InvalidGameID(t *testing.T) {
 	// Setup mock
 	mockGameStateService := new(gameState_mock.MockGameStateService)
 	mockPlayerService := new(player_mock.MockPlayerService)
@@ -109,7 +110,7 @@ func TestHandleStartGame_InvalidRequestBody(t *testing.T) {
 	mockFigureCardService := new(figureCard_mock.MockFigureCardService)
 
 	// Create handlers with mock service
-	handlers := gameState.NewHandlers(mockGameStateService, mockPlayerService, mockBoardService, mockMovementCardService, mockFigureCardService)
+	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService, mockBoardService, mockMovementCardService, mockFigureCardService)
 
 	// Create invalid request body
 	req, _ := http.NewRequest(http.MethodPatch, "/games/start/", nil)
@@ -155,7 +156,7 @@ func TestHandleStartGame_UpdateGameStateError(t *testing.T) {
 		Return(errors.New("database error"))
 
 	// Create handlers
-	handlers := gameState.NewHandlers(mockGameStateService, mockPlayerService,
+	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService,
 		mockBoardService, mockMovementCardService, mockFigureCardService)
 
 	// Create request
@@ -205,7 +206,7 @@ func TestHandleStartGame_GetPlayersError(t *testing.T) {
 		Return([]player.Player{}, errors.New("database error when fetching players"))
 
 	// Create handlers
-	handlers := gameState.NewHandlers(mockGameStateService, mockPlayerService,
+	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService,
 		mockBoardService, mockMovementCardService, mockFigureCardService)
 
 	// Create request
@@ -257,7 +258,7 @@ func TestHandleStartGame_AssignRandomTurnError(t *testing.T) {
 		Return(uuid.Nil, errors.New("there are no players"))
 
 	// Create handlers
-	handlers := gameState.NewHandlers(mockGameStateService, mockPlayerService,
+	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService,
 		mockBoardService, mockMovementCardService, mockFigureCardService)
 
 	// Create request
@@ -320,7 +321,7 @@ func TestHandleStartGame_UpdateCurrentPlayerError(t *testing.T) {
 		Return(errors.New("error updating current player"))
 
 	// Create handlers
-	handlers := gameState.NewHandlers(mockGameStateService, mockPlayerService,
+	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService,
 		mockBoardService, mockMovementCardService, mockFigureCardService)
 
 	// Create request
@@ -385,7 +386,7 @@ func TestHandleStartGame_ConfigureBoardError(t *testing.T) {
 		Return(errors.New("error configuring board"))
 
 	// Create handlers
-	handlers := gameState.NewHandlers(mockGameStateService, mockPlayerService,
+	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService,
 		mockBoardService, mockMovementCardService, mockFigureCardService)
 
 	// Create request
@@ -453,7 +454,7 @@ func TestHandleStartGame_CreateMovementCardDeckError(t *testing.T) {
 		Return(errors.New("error creating movement card deck"))
 
 	// Create handlers
-	handlers := gameState.NewHandlers(mockGameStateService, mockPlayerService,
+	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService,
 		mockBoardService, mockMovementCardService, mockFigureCardService)
 
 	// Create request
@@ -524,7 +525,7 @@ func TestHandleStartGame_CreateFigureCardDeckError(t *testing.T) {
 		Return(errors.New("error creating figure card deck"))
 
 	// Create handlers
-	handlers := gameState.NewHandlers(mockGameStateService, mockPlayerService,
+	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService,
 		mockBoardService, mockMovementCardService, mockFigureCardService)
 
 	// Create request

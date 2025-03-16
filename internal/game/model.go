@@ -31,5 +31,6 @@ func (s *Service) DBToModel(ctx context.Context, dbGame database.Game) Game {
 		MinPlayers:   int(dbGame.MinPlayers),
 		PlayersCount: playersCount,
 		IsPrivate:    dbGame.IsPrivate,
+		Password:     &dbGame.Password.String,
 	}
 }

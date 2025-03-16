@@ -1,4 +1,4 @@
-package game_test
+package handlers_test
 
 import (
 	"bytes"
@@ -11,6 +11,7 @@ import (
 	"github.com/NachoGz/switcher-backend-go/internal/game"
 	game_mock "github.com/NachoGz/switcher-backend-go/internal/game/mocks"
 	gameState "github.com/NachoGz/switcher-backend-go/internal/game_state"
+	"github.com/NachoGz/switcher-backend-go/internal/handlers"
 	"github.com/NachoGz/switcher-backend-go/internal/player"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -69,7 +70,7 @@ func TestHandleCreateGame_Success(t *testing.T) {
 		Return(&responseGame, &responseGameState, &responsePlayer, nil)
 
 	// Create handlers with mock service
-	handlers := game.NewHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService)
 
 	// Create request body
 	requestBody := map[string]interface{}{
@@ -105,7 +106,7 @@ func TestHandleCreateGame_InvalidRequestBody(t *testing.T) {
 	mockService := new(game_mock.MockGameService)
 
 	// Create handlers with mock service
-	handlers := game.NewHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService)
 
 	// Create invalid request body
 	reqBodyBytes := []byte(`{invalid json}`)
@@ -156,7 +157,7 @@ func TestHandleCreateGame_ServiceError(t *testing.T) {
 		Return(emptyGame, emptyGameState, emptyPlayer, errors.New("service error"))
 
 	// Create handlers with mock service
-	handlers := game.NewHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService)
 
 	// Create request body
 	requestBody := map[string]interface{}{

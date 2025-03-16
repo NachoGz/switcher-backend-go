@@ -1,31 +1,22 @@
-package game
+package handlers
 
 import (
 	"encoding/json"
 	"log"
 	"net/http"
 
+	"github.com/NachoGz/switcher-backend-go/internal/game"
 	gameState "github.com/NachoGz/switcher-backend-go/internal/game_state"
 	"github.com/NachoGz/switcher-backend-go/internal/player"
 
 	"github.com/NachoGz/switcher-backend-go/internal/utils"
 )
 
-// Handlers struct holds handlers with service dependency
-type Handlers struct {
-	service GameService
-}
-
-// NewHandlers creates a new handlers instance
-func NewHandlers(service GameService) *Handlers {
-	return &Handlers{service: service}
-}
-
-func (h *Handlers) HandleCreateGame(w http.ResponseWriter, r *http.Request) {
+func (h *GameHandlers) HandleCreateGame(w http.ResponseWriter, r *http.Request) {
 	log.Println("Creating game")
 
 	type GameRequest struct {
-		Game   Game          `json:"game"`
+		Game   game.Game     `json:"game"`
 		Player player.Player `json:"player"`
 	}
 
@@ -36,21 +27,21 @@ func (h *Handlers) HandleCreateGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Use service to create game
-	game, newGameState, newPlayer, err := h.service.CreateGame(r.Context(), params.Game, params.Player)
-	if err != nil || game == nil || newGameState == nil || newPlayer == nil {
+	newGame, newGameState, newPlayer, err := h.gameService.CreateGame(r.Context(), params.Game, params.Player)
+	if err != nil || newGame == nil || newGameState == nil || newPlayer == nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, "Error creating game", err)
 		return
 	}
 
 	// Build response
 	type Response struct {
-		Game      Game                `json:"game"`
+		Game      game.Game           `json:"game"`
 		GameState gameState.GameState `json:"game_state"`
 		Player    player.Player       `json:"player"`
 	}
 
 	response := Response{
-		Game:      *game,
+		Game:      *newGame,
 		GameState: *newGameState,
 		Player:    *newPlayer,
 	}

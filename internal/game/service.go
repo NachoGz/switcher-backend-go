@@ -85,6 +85,8 @@ func (s *Service) CreateGame(ctx context.Context, gameData Game, playerData play
 	// Hash password if provided
 	var passwordSQL sql.NullString
 	if gameData.Password != nil {
+		// Set game to private
+		gameData.IsPrivate = true
 		hashedPassword, err := utils.HashPassword(*gameData.Password)
 		if err != nil {
 			return nil, nil, nil, err
@@ -93,7 +95,6 @@ func (s *Service) CreateGame(ctx context.Context, gameData Game, playerData play
 	} else {
 		passwordSQL = sql.NullString{Valid: false}
 	}
-
 	// Create game using repository
 	game, err := s.gameRepo.CreateGame(ctx, database.CreateGameParams{
 		ID:         uuid.New(),

@@ -1,4 +1,4 @@
-package game_test
+package handlers_test
 
 import (
 	"encoding/json"
@@ -9,6 +9,7 @@ import (
 
 	"github.com/NachoGz/switcher-backend-go/internal/game"
 	game_mock "github.com/NachoGz/switcher-backend-go/internal/game/mocks"
+	"github.com/NachoGz/switcher-backend-go/internal/handlers"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -45,7 +46,7 @@ func TestHandleGetGames_Success(t *testing.T) {
 		Return(games, 2, nil)
 
 	// Create handlers
-	handlers := game.NewHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService)
 
 	// Create request without query parameters
 	req, _ := http.NewRequest(http.MethodGet, "/games", nil)
@@ -106,7 +107,7 @@ func TestHandleGetGames_withQueryParameters(t *testing.T) {
 		Return(games, 2, nil)
 
 	// Create handlers
-	handlers := game.NewHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService)
 
 	// Create request with query parameters
 	req, _ := http.NewRequest(http.MethodGet, "/games?page=1&limit=10&num_players=2&name=Game", nil)
@@ -140,7 +141,7 @@ func TestHandleGetGames_ServiceError(t *testing.T) {
 		Return([]game.Game{}, 0, errors.New("database error"))
 
 	// Create handler
-	handlers := game.NewHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService)
 
 	// Create request
 	req, _ := http.NewRequest(http.MethodGet, "/games", nil)
@@ -167,7 +168,7 @@ func TestHandleGetGames_InvalidPageParameter(t *testing.T) {
 	mockService := new(game_mock.MockGameService)
 
 	// Create handlers
-	handlers := game.NewHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService)
 
 	// Create request
 	req, _ := http.NewRequest(http.MethodGet, "/games?page=invalid", nil)
@@ -211,7 +212,7 @@ func TestHandleGetGamesByID_Success(t *testing.T) {
 		Return(newGame, nil)
 
 	// Create handlers
-	handlers := game.NewHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService)
 
 	// Create request
 	req, _ := http.NewRequest(http.MethodGet, "/games/", nil)
@@ -245,7 +246,7 @@ func TestHandleGetGamesByID_InvalidID(t *testing.T) {
 	mockService := new(game_mock.MockGameService)
 
 	// Create handlers
-	handlers := game.NewHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService)
 
 	// Create request with invalid ID
 	req, _ := http.NewRequest(http.MethodGet, "/games/", nil)
@@ -281,7 +282,7 @@ func TestHandleGetGamesByID_ServiceError(t *testing.T) {
 		Return((*game.Game)(nil), errors.New("database error"))
 
 	// Create handlers
-	handlers := game.NewHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService)
 
 	// Create request with invalid ID
 	req, _ := http.NewRequest(http.MethodGet, "/games/", nil)

@@ -1,40 +1,16 @@
-package gameState
+package handlers
 
 import (
 	"context"
 	"log"
 	"net/http"
 
-	"github.com/NachoGz/switcher-backend-go/internal/board"
-	"github.com/NachoGz/switcher-backend-go/internal/figureCard"
-	"github.com/NachoGz/switcher-backend-go/internal/movementCard"
-	"github.com/NachoGz/switcher-backend-go/internal/player"
+	gameState "github.com/NachoGz/switcher-backend-go/internal/game_state"
 	"github.com/NachoGz/switcher-backend-go/internal/utils"
 	"github.com/google/uuid"
 )
 
-type Handlers struct {
-	gameStateService    GameStateService
-	playerService       player.PlayerService
-	boardService        board.BoardService
-	movementCardService movementCard.MovementCardService
-	figureCardService   figureCard.FigureCardService
-}
-
-// NewHandlers creates a new handlers instance
-func NewHandlers(gameStateService GameStateService, playerService player.PlayerService,
-	boardService board.BoardService, movementCardService movementCard.MovementCardService,
-	figureCardService figureCard.FigureCardService) *Handlers {
-	return &Handlers{
-		gameStateService:    gameStateService,
-		playerService:       playerService,
-		boardService:        boardService,
-		movementCardService: movementCardService,
-		figureCardService:   figureCardService,
-	}
-}
-
-func (h *Handlers) HandleStartGame(w http.ResponseWriter, r *http.Request) {
+func (h *GameStateHandlers) HandleStartGame(w http.ResponseWriter, r *http.Request) {
 	log.Println("Starting game...")
 	gameID, err := uuid.Parse(r.PathValue("gameID"))
 	if err != nil {
@@ -43,7 +19,7 @@ func (h *Handlers) HandleStartGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Update state to playing
-	err = h.gameStateService.UpdateGameState(context.Background(), gameID, PLAYING)
+	err = h.gameStateService.UpdateGameState(context.Background(), gameID, gameState.PLAYING)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, "Error updating game state", err)
 		return

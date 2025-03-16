@@ -35,3 +35,8 @@ func (m *MockGameStateService) UpdateCurrentPlayer(ctx context.Context, gameID u
 	args := m.Called(ctx, gameID, currentPlayerID)
 	return args.Error(0)
 }
+
+func (m *MockGameStateService) GetGameStateByGameID(ctx context.Context, gameID uuid.UUID) (*gameState.GameState, error) {
+	args := m.Called(ctx, gameID)
+	return args.Get(0).(*gameState.GameState), args.Error(1)
+}
