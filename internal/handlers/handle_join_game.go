@@ -41,16 +41,16 @@ func (h *PlayerHandlers) HandleJoinGame(w http.ResponseWriter, r *http.Request) 
 	playersInGame, err := h.playerService.CountPlayers(context.Background(), gameID)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Couldn't get amount of players in game with ID: %s", gameID), err)
+		return
 	}
 
 	if game.MaxPlayers == int(playersInGame) {
 		utils.RespondWithError(w, http.StatusForbidden, "The game is full", err)
+		return
 	}
 
 	if game.IsPrivate && game.Password != nil {
 		storedPasswordHash := game.Password
-		log.Println(*storedPasswordHash)
-		log.Println(*params.Password)
 
 		// No password entered
 		if params.Password == nil {
@@ -62,6 +62,10 @@ func (h *PlayerHandlers) HandleJoinGame(w http.ResponseWriter, r *http.Request) 
 			utils.RespondWithError(w, http.StatusForbidden, "Incorrect password", err)
 			return
 		}
+
+		log.Println(*storedPasswordHash)
+		log.Println(*params.Password)
+
 	}
 
 	gameState, err := h.gameStateService.GetGameStateByGameID(context.Background(), gameID)
