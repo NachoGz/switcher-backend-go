@@ -41,3 +41,8 @@ func (m *MockPlayerService) CountPlayers(ctx context.Context, gameID uuid.UUID) 
 	args := m.Called(ctx, gameID)
 	return args.Get(0).(int), args.Error(1)
 }
+
+func (m *MockPlayerService) GetPlayerByID(ctx context.Context, playerID uuid.UUID) (player.Player, error) {
+	args := m.Called(ctx, playerID)
+	return args.Get(0).(player.Player), args.Error(1)
+}

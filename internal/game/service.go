@@ -84,7 +84,7 @@ func (s *Service) GetAvailableGames(ctx context.Context, numPlayers int, page in
 func (s *Service) CreateGame(ctx context.Context, gameData Game, playerData player.Player) (*Game, *gameState.GameState, *player.Player, error) {
 	// Hash password if provided
 	var passwordSQL sql.NullString
-	if gameData.Password != nil {
+	if *gameData.Password != "" {
 		// Set game to private
 		gameData.IsPrivate = true
 		hashedPassword, err := utils.HashPassword(*gameData.Password)

@@ -35,3 +35,8 @@ func (m *MockPlayerRepository) AssignTurnPlayer(ctx context.Context, params data
 	args := m.Called(ctx, params)
 	return args.Error(1)
 }
+
+func (m *MockPlayerRepository) GetPlayerByID(ctx context.Context, playerID uuid.UUID) (database.Player, error) {
+	args := m.Called(ctx, playerID)
+	return args.Get(0).(database.Player), args.Error(1)
+}

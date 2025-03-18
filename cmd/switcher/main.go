@@ -15,6 +15,7 @@ import (
 	"github.com/NachoGz/switcher-backend-go/internal/middleware"
 	"github.com/NachoGz/switcher-backend-go/internal/movementCard"
 	"github.com/NachoGz/switcher-backend-go/internal/player"
+	"github.com/NachoGz/switcher-backend-go/internal/websocket"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
@@ -60,10 +61,16 @@ func main() {
 	movementCardService := movementCard.NewService(movementCardRepo, playerRepo)
 	figureCardService := figureCard.NewService(figureCardRepo, playerRepo)
 
+	// Create WebSocket server
+	wsHub := websocket.NewHub()
+	go wsHub.Run()
+
 	// Create handlers
-	gameHandlers := handlers.NewGameHandlers(gameService)
-	gameStateHandlers := handlers.NewGameStateHandlers(gameStateService, playerService, boardService, movementCardService, figureCardService)
-	playerHandlers := handlers.NewPlayerHandlers(playerService, gameService, gameStateService)
+	gameHandlers := handlers.NewGameHandlers(gameService, wsHub)
+	gameStateHandlers := handlers.NewGameStateHandlers(gameStateService, playerService, boardService, movementCardService, figureCardService, wsHub)
+	playerHandlers := handlers.NewPlayerHandlers(playerService, gameService, gameStateService, wsHub)
+	wsHandlers := handlers.NewWSHandlers(wsHub, gameService, playerService)
+
 	// Configure routes
 	mux := http.NewServeMux()
 
@@ -72,7 +79,8 @@ func main() {
 	mux.HandleFunc("GET /games", gameHandlers.HandleGetGames)
 	mux.HandleFunc("GET /games/{gameID}", gameHandlers.HandleGetGameByID)
 	mux.HandleFunc("PATCH /games/start/{gameID}", gameStateHandlers.HandleStartGame)
-	mux.HandleFunc("POST /games/join/{gameID}", playerHandlers.HandleJoinGame)
+	mux.HandleFunc("POST /players/join/{gameID}", playerHandlers.HandleJoinGame)
+	mux.HandleFunc("/ws", wsHandlers.HandleWebSocket)
 
 	// Add middleware
 	handler := middleware.CORSMiddleware(mux)

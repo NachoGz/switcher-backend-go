@@ -38,3 +38,8 @@ func (r *PostgresPlayerRepository) GetPlayers(ctx context.Context, gameID uuid.U
 func (r *PostgresPlayerRepository) AssignTurnPlayer(ctx context.Context, params database.AssignTurnPlayerParams) error {
 	return r.queries.AssignTurnPlayer(ctx, params)
 }
+
+// GetPlayerByID gets a player by the given id
+func (r *PostgresPlayerRepository) GetPlayerByID(ctx context.Context, playerID uuid.UUID) (database.Player, error) {
+	return r.queries.GetPlayerByID(ctx, playerID)
+}

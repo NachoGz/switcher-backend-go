@@ -17,6 +17,7 @@ import (
 	"github.com/NachoGz/switcher-backend-go/internal/player"
 	player_mock "github.com/NachoGz/switcher-backend-go/internal/player/mocks"
 	"github.com/NachoGz/switcher-backend-go/internal/utils"
+	websocket_mock "github.com/NachoGz/switcher-backend-go/internal/websocket/mocks"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -27,6 +28,7 @@ func TestHandleJoinGamePublic_Success(t *testing.T) {
 	mockPlayerService := new(player_mock.MockPlayerService)
 	mockGameService := new(game_mock.MockGameService)
 	mockGameStateService := new(gameState_mock.MockGameStateService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -76,8 +78,14 @@ func TestHandleJoinGamePublic_Success(t *testing.T) {
 	mockPlayerService.On("CreatePlayer", mock.Anything, requestPlayer).
 		Return(&responsePlayer, nil)
 
+	mockWSHub.On("BroadcastEvent", uuid.Nil, "GAMES_LIST_UPDATE").
+		Return()
+
+	mockWSHub.On("BroadcastEvent", uuid.Nil, fmt.Sprintf("%s:GAME_INFO_UPDATE", gameID)).
+		Return()
+
 	// Create handlers
-	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService)
+	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService, mockWSHub)
 
 	// Create request body
 	requestBody := map[string]interface{}{
@@ -108,6 +116,7 @@ func TestHandleJoinGamePublic_Success(t *testing.T) {
 	mockPlayerService.AssertExpectations(t)
 	mockGameService.AssertExpectations(t)
 	mockGameStateService.AssertExpectations(t)
+	mockWSHub.AssertExpectations(t)
 }
 
 func TestHandleJoinGamePrivate_Success(t *testing.T) {
@@ -115,6 +124,7 @@ func TestHandleJoinGamePrivate_Success(t *testing.T) {
 	mockPlayerService := new(player_mock.MockPlayerService)
 	mockGameService := new(game_mock.MockGameService)
 	mockGameStateService := new(gameState_mock.MockGameStateService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -169,8 +179,14 @@ func TestHandleJoinGamePrivate_Success(t *testing.T) {
 	mockPlayerService.On("CreatePlayer", mock.Anything, requestPlayer).
 		Return(&responsePlayer, nil)
 
+	mockWSHub.On("BroadcastEvent", uuid.Nil, "GAMES_LIST_UPDATE").
+		Return()
+
+	mockWSHub.On("BroadcastEvent", uuid.Nil, fmt.Sprintf("%s:GAME_INFO_UPDATE", gameID)).
+		Return()
+
 	// Create handlers
-	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService)
+	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService, mockWSHub)
 
 	// Create request body
 	requestBody := map[string]interface{}{
@@ -201,6 +217,7 @@ func TestHandleJoinGamePrivate_Success(t *testing.T) {
 	mockPlayerService.AssertExpectations(t)
 	mockGameService.AssertExpectations(t)
 	mockGameStateService.AssertExpectations(t)
+	mockWSHub.AssertExpectations(t)
 }
 
 func TestHandleJoinGamePrivate_IncorrectPassword(t *testing.T) {
@@ -208,6 +225,7 @@ func TestHandleJoinGamePrivate_IncorrectPassword(t *testing.T) {
 	mockPlayerService := new(player_mock.MockPlayerService)
 	mockGameService := new(game_mock.MockGameService)
 	mockGameStateService := new(gameState_mock.MockGameStateService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -242,7 +260,7 @@ func TestHandleJoinGamePrivate_IncorrectPassword(t *testing.T) {
 		Return(responseGame.PlayersCount, nil)
 
 	// Create handlers
-	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService)
+	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService, mockWSHub)
 
 	// Create request body
 	requestBody := map[string]interface{}{
@@ -276,6 +294,8 @@ func TestHandleJoinGamePrivate_IncorrectPassword(t *testing.T) {
 	mockGameStateService.AssertExpectations(t)
 	mockGameStateService.AssertNotCalled(t, "GetGameStateByGameID")
 	mockPlayerService.AssertNotCalled(t, "CreatePlayer")
+	mockWSHub.AssertNotCalled(t, "BroadcastEvent")
+
 }
 
 func TestHandleJoinGamePrivate_NoPasswordGiven(t *testing.T) {
@@ -283,6 +303,7 @@ func TestHandleJoinGamePrivate_NoPasswordGiven(t *testing.T) {
 	mockPlayerService := new(player_mock.MockPlayerService)
 	mockGameService := new(game_mock.MockGameService)
 	mockGameStateService := new(gameState_mock.MockGameStateService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -317,7 +338,7 @@ func TestHandleJoinGamePrivate_NoPasswordGiven(t *testing.T) {
 		Return(responseGame.PlayersCount, nil)
 
 	// Create handlers
-	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService)
+	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService, mockWSHub)
 
 	// Create request body
 	requestBody := map[string]interface{}{
@@ -350,6 +371,7 @@ func TestHandleJoinGamePrivate_NoPasswordGiven(t *testing.T) {
 	mockGameStateService.AssertExpectations(t)
 	mockGameStateService.AssertNotCalled(t, "GetGameStateByGameID")
 	mockPlayerService.AssertNotCalled(t, "CreatePlayer")
+	mockWSHub.AssertNotCalled(t, "BroadcastEvent")
 }
 
 func TestHandleJoinGame_InvalidGameID(t *testing.T) {
@@ -357,6 +379,7 @@ func TestHandleJoinGame_InvalidGameID(t *testing.T) {
 	mockPlayerService := new(player_mock.MockPlayerService)
 	mockGameService := new(game_mock.MockGameService)
 	mockGameStateService := new(gameState_mock.MockGameStateService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -370,7 +393,7 @@ func TestHandleJoinGame_InvalidGameID(t *testing.T) {
 	}
 
 	// Create handlers with mock service
-	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService)
+	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService, mockWSHub)
 
 	// Create request body
 	requestBody := map[string]interface{}{
@@ -403,6 +426,7 @@ func TestHandleJoinGame_InvalidGameID(t *testing.T) {
 	mockPlayerService.AssertNotCalled(t, "CountPlayers")
 	mockGameStateService.AssertNotCalled(t, "GetGameStateByGameID")
 	mockPlayerService.AssertNotCalled(t, "CreatePlayer")
+	mockWSHub.AssertNotCalled(t, "BroadcastEvent")
 }
 
 func TestHandleJoinGame_InvalidRequestBody(t *testing.T) {
@@ -410,12 +434,13 @@ func TestHandleJoinGame_InvalidRequestBody(t *testing.T) {
 	mockPlayerService := new(player_mock.MockPlayerService)
 	mockGameService := new(game_mock.MockGameService)
 	mockGameStateService := new(gameState_mock.MockGameStateService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
 
 	// Create handlers with mock service
-	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService)
+	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService, mockWSHub)
 
 	// Create request body
 	reqBodyBytes := []byte(`{invalid json}`)
@@ -444,6 +469,7 @@ func TestHandleJoinGame_InvalidRequestBody(t *testing.T) {
 	mockPlayerService.AssertNotCalled(t, "CountPlayers")
 	mockGameStateService.AssertNotCalled(t, "GetGameStateByGameID")
 	mockPlayerService.AssertNotCalled(t, "CreatePlayer")
+	mockWSHub.AssertNotCalled(t, "BroadcastEvent")
 }
 
 func TestHandleJoinGame_GameNotFound(t *testing.T) {
@@ -451,6 +477,7 @@ func TestHandleJoinGame_GameNotFound(t *testing.T) {
 	mockPlayerService := new(player_mock.MockPlayerService)
 	mockGameService := new(game_mock.MockGameService)
 	mockGameStateService := new(gameState_mock.MockGameStateService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -467,7 +494,7 @@ func TestHandleJoinGame_GameNotFound(t *testing.T) {
 		Return(&game.Game{}, errors.New("game not found"))
 
 	// Create handlers with mock service
-	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService)
+	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService, mockWSHub)
 
 	// Create request body
 	requestBody := map[string]interface{}{
@@ -500,6 +527,7 @@ func TestHandleJoinGame_GameNotFound(t *testing.T) {
 	mockPlayerService.AssertNotCalled(t, "CountPlayers")
 	mockGameStateService.AssertNotCalled(t, "GetGameStateByGameID")
 	mockPlayerService.AssertNotCalled(t, "CreatePlayer")
+	mockWSHub.AssertNotCalled(t, "BroadcastEvent")
 }
 
 func TestHandleJoinGame_NoPlayersInGame(t *testing.T) {
@@ -507,6 +535,7 @@ func TestHandleJoinGame_NoPlayersInGame(t *testing.T) {
 	mockPlayerService := new(player_mock.MockPlayerService)
 	mockGameService := new(game_mock.MockGameService)
 	mockGameStateService := new(gameState_mock.MockGameStateService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -540,7 +569,7 @@ func TestHandleJoinGame_NoPlayersInGame(t *testing.T) {
 		Return(0, errors.New("no players in game"))
 
 	// Create handlers with mock service
-	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService)
+	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService, mockWSHub)
 
 	// Create request body
 	requestBody := map[string]interface{}{
@@ -573,6 +602,7 @@ func TestHandleJoinGame_NoPlayersInGame(t *testing.T) {
 	mockPlayerService.AssertExpectations(t)
 	mockGameStateService.AssertNotCalled(t, "GetGameStateByGameID")
 	mockPlayerService.AssertNotCalled(t, "CreatePlayer")
+	mockWSHub.AssertNotCalled(t, "BroadcastEvent")
 }
 
 func TestHandleJoinGame_FullGame(t *testing.T) {
@@ -580,6 +610,7 @@ func TestHandleJoinGame_FullGame(t *testing.T) {
 	mockPlayerService := new(player_mock.MockPlayerService)
 	mockGameService := new(game_mock.MockGameService)
 	mockGameStateService := new(gameState_mock.MockGameStateService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -613,7 +644,7 @@ func TestHandleJoinGame_FullGame(t *testing.T) {
 		Return(4, nil)
 
 	// Create handlers with mock service
-	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService)
+	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService, mockWSHub)
 
 	// Create request body
 	requestBody := map[string]interface{}{
@@ -646,6 +677,7 @@ func TestHandleJoinGame_FullGame(t *testing.T) {
 	mockPlayerService.AssertExpectations(t)
 	mockGameStateService.AssertNotCalled(t, "GetGameStateByGameID")
 	mockPlayerService.AssertNotCalled(t, "CreatePlayer")
+	mockWSHub.AssertNotCalled(t, "BroadcastEvent")
 }
 
 func TestHandleJoinGame_GameStateError(t *testing.T) {
@@ -653,6 +685,7 @@ func TestHandleJoinGame_GameStateError(t *testing.T) {
 	mockPlayerService := new(player_mock.MockPlayerService)
 	mockGameService := new(game_mock.MockGameService)
 	mockGameStateService := new(gameState_mock.MockGameStateService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -689,7 +722,7 @@ func TestHandleJoinGame_GameStateError(t *testing.T) {
 		Return(&gameState.GameState{}, errors.New("game state not found"))
 
 	// Create handlers with mock service
-	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService)
+	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService, mockWSHub)
 
 	// Create request body
 	requestBody := map[string]interface{}{
@@ -722,6 +755,7 @@ func TestHandleJoinGame_GameStateError(t *testing.T) {
 	mockPlayerService.AssertExpectations(t)
 	mockGameStateService.AssertExpectations(t)
 	mockPlayerService.AssertNotCalled(t, "CreatePlayer")
+	mockWSHub.AssertNotCalled(t, "BroadcastEvent")
 }
 
 func TestHandleJoinGame_CreatePlayerError(t *testing.T) {
@@ -729,6 +763,7 @@ func TestHandleJoinGame_CreatePlayerError(t *testing.T) {
 	mockPlayerService := new(player_mock.MockPlayerService)
 	mockGameService := new(game_mock.MockGameService)
 	mockGameStateService := new(gameState_mock.MockGameStateService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -774,7 +809,7 @@ func TestHandleJoinGame_CreatePlayerError(t *testing.T) {
 		Return(&player.Player{}, errors.New("Couldn't create player"))
 
 	// Create handlers with mock service
-	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService)
+	handlers := handlers.NewPlayerHandlers(mockPlayerService, mockGameService, mockGameStateService, mockWSHub)
 
 	// Create request body
 	requestBody := map[string]interface{}{
@@ -807,4 +842,5 @@ func TestHandleJoinGame_CreatePlayerError(t *testing.T) {
 	mockPlayerService.AssertExpectations(t)
 	mockGameStateService.AssertExpectations(t)
 	mockPlayerService.AssertExpectations(t)
+	mockWSHub.AssertNotCalled(t, "BroadcastEvent")
 }

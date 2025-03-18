@@ -13,6 +13,7 @@ import (
 	gameState "github.com/NachoGz/switcher-backend-go/internal/game_state"
 	"github.com/NachoGz/switcher-backend-go/internal/handlers"
 	"github.com/NachoGz/switcher-backend-go/internal/player"
+	websocket_mock "github.com/NachoGz/switcher-backend-go/internal/websocket/mocks"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -21,6 +22,7 @@ import (
 func TestHandleCreateGame_Success(t *testing.T) {
 	// Setup mock
 	mockService := new(game_mock.MockGameService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -69,8 +71,11 @@ func TestHandleCreateGame_Success(t *testing.T) {
 	mockService.On("CreateGame", mock.Anything, requestGame, requestPlayer).
 		Return(&responseGame, &responseGameState, &responsePlayer, nil)
 
+	mockWSHub.On("BroadcastEvent", uuid.Nil, "GAMES_LIST_UPDATE").
+		Return()
+
 	// Create handlers with mock service
-	handlers := handlers.NewGameHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService, mockWSHub)
 
 	// Create request body
 	requestBody := map[string]interface{}{
@@ -104,9 +109,10 @@ func TestHandleCreateGame_Success(t *testing.T) {
 func TestHandleCreateGame_InvalidRequestBody(t *testing.T) {
 	// Setup mock
 	mockService := new(game_mock.MockGameService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Create handlers with mock service
-	handlers := handlers.NewGameHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService, mockWSHub)
 
 	// Create invalid request body
 	reqBodyBytes := []byte(`{invalid json}`)
@@ -134,6 +140,7 @@ func TestHandleCreateGame_InvalidRequestBody(t *testing.T) {
 func TestHandleCreateGame_ServiceError(t *testing.T) {
 	// Setup mock
 	mockService := new(game_mock.MockGameService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	requestGame := game.Game{
@@ -157,7 +164,7 @@ func TestHandleCreateGame_ServiceError(t *testing.T) {
 		Return(emptyGame, emptyGameState, emptyPlayer, errors.New("service error"))
 
 	// Create handlers with mock service
-	handlers := handlers.NewGameHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService, mockWSHub)
 
 	// Create request body
 	requestBody := map[string]interface{}{

@@ -10,6 +10,8 @@ import (
 	"github.com/NachoGz/switcher-backend-go/internal/game"
 	game_mock "github.com/NachoGz/switcher-backend-go/internal/game/mocks"
 	"github.com/NachoGz/switcher-backend-go/internal/handlers"
+	"github.com/NachoGz/switcher-backend-go/internal/websocket"
+	websocket_mock "github.com/NachoGz/switcher-backend-go/internal/websocket/mocks"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -18,6 +20,7 @@ import (
 func TestHandleGetGames_Success(t *testing.T) {
 	// Setup mock service
 	mockService := new(game_mock.MockGameService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Create test games
 	password := "secret"
@@ -46,7 +49,7 @@ func TestHandleGetGames_Success(t *testing.T) {
 		Return(games, 2, nil)
 
 	// Create handlers
-	handlers := handlers.NewGameHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService, mockWSHub)
 
 	// Create request without query parameters
 	req, _ := http.NewRequest(http.MethodGet, "/games", nil)
@@ -79,6 +82,7 @@ func TestHandleGetGames_Success(t *testing.T) {
 func TestHandleGetGames_withQueryParameters(t *testing.T) {
 	// Create mock service
 	mockService := new(game_mock.MockGameService)
+	mockWebsocket := new(websocket.Hub)
 
 	// Create test games
 	password := "secret"
@@ -107,7 +111,7 @@ func TestHandleGetGames_withQueryParameters(t *testing.T) {
 		Return(games, 2, nil)
 
 	// Create handlers
-	handlers := handlers.NewGameHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService, mockWebsocket)
 
 	// Create request with query parameters
 	req, _ := http.NewRequest(http.MethodGet, "/games?page=1&limit=10&num_players=2&name=Game", nil)
@@ -135,13 +139,14 @@ func TestHandleGetGames_withQueryParameters(t *testing.T) {
 func TestHandleGetGames_ServiceError(t *testing.T) {
 	// Setup mock service
 	mockService := new(game_mock.MockGameService)
+	mockWebsocket := new(websocket.Hub)
 
 	// Setup expectations with error
 	mockService.On("GetAvailableGames", mock.Anything, 1, 1, 5, "").
 		Return([]game.Game{}, 0, errors.New("database error"))
 
 	// Create handler
-	handlers := handlers.NewGameHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService, mockWebsocket)
 
 	// Create request
 	req, _ := http.NewRequest(http.MethodGet, "/games", nil)
@@ -166,9 +171,10 @@ func TestHandleGetGames_ServiceError(t *testing.T) {
 func TestHandleGetGames_InvalidPageParameter(t *testing.T) {
 	// Setup mock service
 	mockService := new(game_mock.MockGameService)
+	mockWebsocket := new(websocket.Hub)
 
 	// Create handlers
-	handlers := handlers.NewGameHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService, mockWebsocket)
 
 	// Create request
 	req, _ := http.NewRequest(http.MethodGet, "/games?page=invalid", nil)
@@ -195,6 +201,7 @@ func TestHandleGetGames_InvalidPageParameter(t *testing.T) {
 func TestHandleGetGamesByID_Success(t *testing.T) {
 	// Setup mock service
 	mockService := new(game_mock.MockGameService)
+	mockWebsocket := new(websocket.Hub)
 
 	// Create test game
 	gameID := uuid.New()
@@ -212,7 +219,7 @@ func TestHandleGetGamesByID_Success(t *testing.T) {
 		Return(newGame, nil)
 
 	// Create handlers
-	handlers := handlers.NewGameHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService, mockWebsocket)
 
 	// Create request
 	req, _ := http.NewRequest(http.MethodGet, "/games/", nil)
@@ -244,9 +251,10 @@ func TestHandleGetGamesByID_Success(t *testing.T) {
 func TestHandleGetGamesByID_InvalidID(t *testing.T) {
 	// Setup mock service
 	mockService := new(game_mock.MockGameService)
+	mockWebsocket := new(websocket.Hub)
 
 	// Create handlers
-	handlers := handlers.NewGameHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService, mockWebsocket)
 
 	// Create request with invalid ID
 	req, _ := http.NewRequest(http.MethodGet, "/games/", nil)
@@ -274,7 +282,7 @@ func TestHandleGetGamesByID_InvalidID(t *testing.T) {
 func TestHandleGetGamesByID_ServiceError(t *testing.T) {
 	// Setup mock service
 	mockService := new(game_mock.MockGameService)
-
+	mockWebsocket := new(websocket.Hub)
 	gameID := uuid.New()
 
 	// Setup mock expectations with error
@@ -282,7 +290,7 @@ func TestHandleGetGamesByID_ServiceError(t *testing.T) {
 		Return((*game.Game)(nil), errors.New("database error"))
 
 	// Create handlers
-	handlers := handlers.NewGameHandlers(mockService)
+	handlers := handlers.NewGameHandlers(mockService, mockWebsocket)
 
 	// Create request with invalid ID
 	req, _ := http.NewRequest(http.MethodGet, "/games/", nil)

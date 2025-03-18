@@ -13,6 +13,7 @@ type PlayerService interface {
 	GetPlayers(ctx context.Context, gameID uuid.UUID) ([]Player, error)
 	AssignRandomTurns(ctx context.Context, players []Player) (uuid.UUID, error)
 	CountPlayers(ctx context.Context, gameID uuid.UUID) (int, error)
+	GetPlayerByID(ctx context.Context, playerID uuid.UUID) (Player, error)
 }
 
 type PlayerRepository interface {
@@ -20,4 +21,5 @@ type PlayerRepository interface {
 	CountPlayers(ctx context.Context, gameID uuid.UUID) (int64, error)
 	GetPlayers(ctx context.Context, gameID uuid.UUID) ([]database.Player, error)
 	AssignTurnPlayer(ctx context.Context, params database.AssignTurnPlayerParams) error
+	GetPlayerByID(ctx context.Context, playerID uuid.UUID) (database.Player, error)
 }
