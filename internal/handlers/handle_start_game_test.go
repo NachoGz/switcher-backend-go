@@ -56,7 +56,7 @@ func TestHandleStartGame_Success(t *testing.T) {
 	mockGameStateService.On("UpdateGameState", mock.Anything, gameID, gameState.PLAYING).
 		Return(nil)
 
-	mockPlayerService.On("GetPlayers", mock.Anything, gameID).
+	mockPlayerService.On("GetPlayersInGame", mock.Anything, gameID).
 		Return(responsePlayers, nil)
 
 	mockPlayerService.On("AssignRandomTurns", mock.Anything, responsePlayers).
@@ -144,7 +144,7 @@ func TestHandleStartGame_InvalidGameID(t *testing.T) {
 
 	// Ensure services are not called
 	mockGameStateService.AssertNotCalled(t, "UpdateGameState")
-	mockPlayerService.AssertNotCalled(t, "GetPlayers")
+	mockPlayerService.AssertNotCalled(t, "GetPlayersInGame")
 	mockPlayerService.AssertNotCalled(t, "AssignRandomTurns")
 	mockBoardService.AssertNotCalled(t, "ConfigureBoard")
 	mockMovementCardService.AssertNotCalled(t, "CreateMovementCardDeck")
@@ -194,7 +194,7 @@ func TestHandleStartGame_UpdateGameStateError(t *testing.T) {
 	// Verify only the necessary services were called
 	mockGameStateService.AssertExpectations(t)
 	mockGameStateService.AssertNotCalled(t, "UpdateGameState")
-	mockPlayerService.AssertNotCalled(t, "GetPlayers")
+	mockPlayerService.AssertNotCalled(t, "GetPlayersInGame")
 	mockPlayerService.AssertNotCalled(t, "AssignRandomTurns")
 	mockBoardService.AssertNotCalled(t, "ConfigureBoard")
 	mockMovementCardService.AssertNotCalled(t, "CreateMovementCardDeck")
@@ -217,7 +217,7 @@ func TestHandleStartGame_GetPlayersError(t *testing.T) {
 	// Mock responses
 	mockGameStateService.On("UpdateGameState", mock.Anything, gameID, gameState.PLAYING).
 		Return(nil)
-	mockPlayerService.On("GetPlayers", mock.Anything, gameID).
+	mockPlayerService.On("GetPlayersInGame", mock.Anything, gameID).
 		Return([]player.Player{}, errors.New("database error when fetching players"))
 
 	// Create handlers
@@ -268,7 +268,7 @@ func TestHandleStartGame_AssignRandomTurnError(t *testing.T) {
 	// Mock responses
 	mockGameStateService.On("UpdateGameState", mock.Anything, gameID, gameState.PLAYING).
 		Return(nil)
-	mockPlayerService.On("GetPlayers", mock.Anything, gameID).
+	mockPlayerService.On("GetPlayersInGame", mock.Anything, gameID).
 		Return([]player.Player{}, nil)
 
 	mockPlayerService.On("AssignRandomTurns", mock.Anything, []player.Player{}).
@@ -340,7 +340,7 @@ func TestHandleStartGame_UpdateCurrentPlayerError(t *testing.T) {
 	// Mock responses
 	mockGameStateService.On("UpdateGameState", mock.Anything, gameID, gameState.PLAYING).
 		Return(nil)
-	mockPlayerService.On("GetPlayers", mock.Anything, gameID).
+	mockPlayerService.On("GetPlayersInGame", mock.Anything, gameID).
 		Return(responsePlayers, nil)
 	mockPlayerService.On("AssignRandomTurns", mock.Anything, responsePlayers).
 		Return(responsePlayers[0].ID, nil)
@@ -405,7 +405,7 @@ func TestHandleStartGame_ConfigureBoardError(t *testing.T) {
 	// Mock responses
 	mockGameStateService.On("UpdateGameState", mock.Anything, gameID, gameState.PLAYING).
 		Return(nil)
-	mockPlayerService.On("GetPlayers", mock.Anything, gameID).
+	mockPlayerService.On("GetPlayersInGame", mock.Anything, gameID).
 		Return(responsePlayers, nil)
 	mockPlayerService.On("AssignRandomTurns", mock.Anything, responsePlayers).
 		Return(responsePlayers[0].ID, nil)
@@ -472,7 +472,7 @@ func TestHandleStartGame_CreateMovementCardDeckError(t *testing.T) {
 	// Mock responses
 	mockGameStateService.On("UpdateGameState", mock.Anything, gameID, gameState.PLAYING).
 		Return(nil)
-	mockPlayerService.On("GetPlayers", mock.Anything, gameID).
+	mockPlayerService.On("GetPlayersInGame", mock.Anything, gameID).
 		Return(responsePlayers, nil)
 	mockPlayerService.On("AssignRandomTurns", mock.Anything, responsePlayers).
 		Return(responsePlayers[0].ID, nil)
@@ -542,7 +542,7 @@ func TestHandleStartGame_CreateFigureCardDeckError(t *testing.T) {
 	// Mock responses
 	mockGameStateService.On("UpdateGameState", mock.Anything, gameID, gameState.PLAYING).
 		Return(nil)
-	mockPlayerService.On("GetPlayers", mock.Anything, gameID).
+	mockPlayerService.On("GetPlayersInGame", mock.Anything, gameID).
 		Return(responsePlayers, nil)
 	mockPlayerService.On("AssignRandomTurns", mock.Anything, responsePlayers).
 		Return(responsePlayers[0].ID, nil)

@@ -26,7 +26,7 @@ func (h *GameStateHandlers) HandleStartGame(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	players, err := h.playerService.GetPlayers(context.Background(), gameID)
+	players, err := h.playerService.GetPlayersInGame(context.Background(), gameID)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, "Error fetching players", err)
 		return

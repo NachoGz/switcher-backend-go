@@ -43,7 +43,7 @@ func (h *WSHandlers) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 
 	// Get the player to verify they belong to this game
 	if playerID != uuid.Nil {
-		player, err := h.playerService.GetPlayerByID(r.Context(), playerID)
+		player, err := h.playerService.GetPlayerByID(r.Context(), playerID, gameID)
 		if err != nil || player.GameID != gameID {
 			utils.RespondWithError(w, http.StatusForbidden, "Player not in this game", err)
 			return

@@ -26,7 +26,7 @@ func (m *MockPlayerService) CreatePlayer(ctx context.Context, playerData player.
 	return args.Get(0).(*player.Player), args.Error(1)
 }
 
-func (m *MockPlayerService) GetPlayers(ctx context.Context, gameID uuid.UUID) ([]player.Player, error) {
+func (m *MockPlayerService) GetPlayersInGame(ctx context.Context, gameID uuid.UUID) ([]player.Player, error) {
 	args := m.Called(ctx, gameID)
 	return args.Get(0).([]player.Player), args.Error(1)
 }
@@ -42,7 +42,7 @@ func (m *MockPlayerService) CountPlayers(ctx context.Context, gameID uuid.UUID) 
 	return args.Get(0).(int), args.Error(1)
 }
 
-func (m *MockPlayerService) GetPlayerByID(ctx context.Context, playerID uuid.UUID) (player.Player, error) {
-	args := m.Called(ctx, playerID)
+func (m *MockPlayerService) GetPlayerByID(ctx context.Context, playerID uuid.UUID, gameID uuid.UUID) (player.Player, error) {
+	args := m.Called(ctx, playerID, gameID)
 	return args.Get(0).(player.Player), args.Error(1)
 }
