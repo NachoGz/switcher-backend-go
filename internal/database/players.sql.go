@@ -78,6 +78,29 @@ func (q *Queries) CreatePlayer(ctx context.Context, arg CreatePlayerParams) (Pla
 	return i, err
 }
 
+const getPlayerByID = `-- name: GetPlayerByID :one
+SELECT id, name, turn, game_id, game_state_id, host, winner, created_at, updated_at
+FROM players
+WHERE id=$1
+`
+
+func (q *Queries) GetPlayerByID(ctx context.Context, id uuid.UUID) (Player, error) {
+	row := q.db.QueryRowContext(ctx, getPlayerByID, id)
+	var i Player
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Turn,
+		&i.GameID,
+		&i.GameStateID,
+		&i.Host,
+		&i.Winner,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getPlayers = `-- name: GetPlayers :many
 SELECT id, name, turn, game_id, game_state_id, host, winner, created_at, updated_at
 FROM players

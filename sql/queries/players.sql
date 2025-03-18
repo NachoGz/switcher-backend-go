@@ -15,3 +15,8 @@ WHERE game_id=$1;
 UPDATE players
 SET turn=$2, updated_at = NOW()
 WHERE id=$1;
+
+-- name: GetPlayerByID :one
+SELECT *
+FROM players
+WHERE id=$1;
