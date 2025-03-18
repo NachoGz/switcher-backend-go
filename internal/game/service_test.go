@@ -36,7 +36,8 @@ func TestCreateGame(t *testing.T) {
 	)
 
 	// Test data
-	testGame := game.Game{Name: "Test Game", MaxPlayers: 4, MinPlayers: 2}
+	password := ""
+	testGame := game.Game{Name: "Test Game", MaxPlayers: 4, MinPlayers: 2, Password: &password}
 	testPlayer := player.Player{Name: "Player1"}
 
 	// Mock responses from database
