@@ -43,8 +43,8 @@ func (s *Service) CreatePlayer(ctx context.Context, playerData Player) (*Player,
 	return &resultPlayer, nil
 }
 
-func (s *Service) GetPlayers(ctx context.Context, gameID uuid.UUID) ([]Player, error) {
-	players, err := s.playerRepo.GetPlayers(ctx, gameID)
+func (s *Service) GetPlayersInGame(ctx context.Context, gameID uuid.UUID) ([]Player, error) {
+	players, err := s.playerRepo.GetPlayersInGame(ctx, gameID)
 	if err != nil {
 		return nil, err
 	}
@@ -121,8 +121,11 @@ func (s *Service) CountPlayers(ctx context.Context, gameID uuid.UUID) (int, erro
 	return int(amountOfPlayers), nil
 }
 
-func (s *Service) GetPlayerByID(ctx context.Context, playerID uuid.UUID) (Player, error) {
-	playerDB, err := s.playerRepo.GetPlayerByID(ctx, playerID)
+func (s *Service) GetPlayerByID(ctx context.Context, playerID uuid.UUID, gameID uuid.UUID) (Player, error) {
+	playerDB, err := s.playerRepo.GetPlayerByID(ctx, database.GetPlayerByIDParams{
+		ID:     playerID,
+		GameID: gameID,
+	})
 	if err != nil {
 		return Player{}, err
 	}

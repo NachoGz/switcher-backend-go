@@ -6,7 +6,7 @@ RETURNING *;
 -- name: CountPlayers :one
 SELECT COUNT(*) FROM players WHERE game_id = $1;
 
--- name: GetPlayers :many
+-- name: GetPlayersInGame :many
 SELECT *
 FROM players
 WHERE game_id=$1;
@@ -19,4 +19,4 @@ WHERE id=$1;
 -- name: GetPlayerByID :one
 SELECT *
 FROM players
-WHERE id=$1;
+WHERE game_id=$1 AND id=$2;

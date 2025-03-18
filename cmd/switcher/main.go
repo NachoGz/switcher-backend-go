@@ -78,8 +78,13 @@ func main() {
 	mux.HandleFunc("POST /games", gameHandlers.HandleCreateGame)
 	mux.HandleFunc("GET /games", gameHandlers.HandleGetGames)
 	mux.HandleFunc("GET /games/{gameID}", gameHandlers.HandleGetGameByID)
-	mux.HandleFunc("PATCH /games/start/{gameID}", gameStateHandlers.HandleStartGame)
+	mux.HandleFunc("PATCH /game_state/start/{gameID}", gameStateHandlers.HandleStartGame)
+	// Player routes
 	mux.HandleFunc("POST /players/join/{gameID}", playerHandlers.HandleJoinGame)
+	mux.HandleFunc("GET /players/{gameID}", playerHandlers.HandleGetPlayers)
+	mux.HandleFunc("GET /players/{gameID}/{playerID}", playerHandlers.HandleGetPlayer)
+
+	// Websocket route
 	mux.HandleFunc("/ws", wsHandlers.HandleWebSocket)
 
 	// Add middleware

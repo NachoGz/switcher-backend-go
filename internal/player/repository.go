@@ -29,9 +29,9 @@ func (r *PostgresPlayerRepository) CountPlayers(ctx context.Context, gameID uuid
 	return r.queries.CountPlayers(ctx, gameID)
 }
 
-// GetPlayers fetches all the players in a game
-func (r *PostgresPlayerRepository) GetPlayers(ctx context.Context, gameID uuid.UUID) ([]database.Player, error) {
-	return r.queries.GetPlayers(ctx, gameID)
+// GetPlayersInGame fetches all the players in a game
+func (r *PostgresPlayerRepository) GetPlayersInGame(ctx context.Context, gameID uuid.UUID) ([]database.Player, error) {
+	return r.queries.GetPlayersInGame(ctx, gameID)
 }
 
 // AssignTurnPlayer sets the turn for the given player
@@ -40,6 +40,6 @@ func (r *PostgresPlayerRepository) AssignTurnPlayer(ctx context.Context, params 
 }
 
 // GetPlayerByID gets a player by the given id
-func (r *PostgresPlayerRepository) GetPlayerByID(ctx context.Context, playerID uuid.UUID) (database.Player, error) {
-	return r.queries.GetPlayerByID(ctx, playerID)
+func (r *PostgresPlayerRepository) GetPlayerByID(ctx context.Context, params database.GetPlayerByIDParams) (database.Player, error) {
+	return r.queries.GetPlayerByID(ctx, params)
 }

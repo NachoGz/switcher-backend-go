@@ -81,11 +81,16 @@ func (q *Queries) CreatePlayer(ctx context.Context, arg CreatePlayerParams) (Pla
 const getPlayerByID = `-- name: GetPlayerByID :one
 SELECT id, name, turn, game_id, game_state_id, host, winner, created_at, updated_at
 FROM players
-WHERE id=$1
+WHERE game_id=$1 AND id=$2
 `
 
-func (q *Queries) GetPlayerByID(ctx context.Context, id uuid.UUID) (Player, error) {
-	row := q.db.QueryRowContext(ctx, getPlayerByID, id)
+type GetPlayerByIDParams struct {
+	GameID uuid.UUID
+	ID     uuid.UUID
+}
+
+func (q *Queries) GetPlayerByID(ctx context.Context, arg GetPlayerByIDParams) (Player, error) {
+	row := q.db.QueryRowContext(ctx, getPlayerByID, arg.GameID, arg.ID)
 	var i Player
 	err := row.Scan(
 		&i.ID,
@@ -101,14 +106,14 @@ func (q *Queries) GetPlayerByID(ctx context.Context, id uuid.UUID) (Player, erro
 	return i, err
 }
 
-const getPlayers = `-- name: GetPlayers :many
+const getPlayersInGame = `-- name: GetPlayersInGame :many
 SELECT id, name, turn, game_id, game_state_id, host, winner, created_at, updated_at
 FROM players
 WHERE game_id=$1
 `
 
-func (q *Queries) GetPlayers(ctx context.Context, gameID uuid.UUID) ([]Player, error) {
-	rows, err := q.db.QueryContext(ctx, getPlayers, gameID)
+func (q *Queries) GetPlayersInGame(ctx context.Context, gameID uuid.UUID) ([]Player, error) {
+	rows, err := q.db.QueryContext(ctx, getPlayersInGame, gameID)
 	if err != nil {
 		return nil, err
 	}

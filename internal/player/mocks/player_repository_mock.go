@@ -24,8 +24,8 @@ func (m *MockPlayerRepository) CountPlayers(ctx context.Context, gameID uuid.UUI
 	return args.Get(0).(int64), args.Error(1)
 }
 
-// GetPlayers fetches all the players in a game
-func (m *MockPlayerRepository) GetPlayers(ctx context.Context, gameID uuid.UUID) ([]database.Player, error) {
+// GetPlayersInGame fetches all the players in a game
+func (m *MockPlayerRepository) GetPlayersInGame(ctx context.Context, gameID uuid.UUID) ([]database.Player, error) {
 	args := m.Called(ctx, gameID)
 	return args.Get(0).([]database.Player), args.Error(1)
 }
@@ -36,7 +36,7 @@ func (m *MockPlayerRepository) AssignTurnPlayer(ctx context.Context, params data
 	return args.Error(1)
 }
 
-func (m *MockPlayerRepository) GetPlayerByID(ctx context.Context, playerID uuid.UUID) (database.Player, error) {
-	args := m.Called(ctx, playerID)
+func (m *MockPlayerRepository) GetPlayerByID(ctx context.Context, params database.GetPlayerByIDParams) (database.Player, error) {
+	args := m.Called(ctx, params)
 	return args.Get(0).(database.Player), args.Error(1)
 }

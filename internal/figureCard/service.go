@@ -55,7 +55,7 @@ func (s *Service) CreateFigureCardDeck(ctx context.Context, gameID uuid.UUID) er
 		}
 	}
 
-	players, err := s.playerRepo.GetPlayers(ctx, gameID)
+	players, err := s.playerRepo.GetPlayersInGame(ctx, gameID)
 	if err != nil {
 		return fmt.Errorf("failed to get players: %w", err)
 	}
