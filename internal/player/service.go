@@ -120,3 +120,14 @@ func (s *Service) CountPlayers(ctx context.Context, gameID uuid.UUID) (int, erro
 
 	return int(amountOfPlayers), nil
 }
+
+func (s *Service) GetPlayerByID(ctx context.Context, playerID uuid.UUID) (Player, error) {
+	playerDB, err := s.playerRepo.GetPlayerByID(ctx, playerID)
+	if err != nil {
+		return Player{}, err
+	}
+
+	returnPlayer := s.DBToModel(ctx, playerDB)
+
+	return returnPlayer, nil
+}
