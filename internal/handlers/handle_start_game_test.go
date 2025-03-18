@@ -3,6 +3,7 @@ package handlers_test
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -13,6 +14,7 @@ import (
 	gameState_mock "github.com/NachoGz/switcher-backend-go/internal/game_state/mocks"
 	"github.com/NachoGz/switcher-backend-go/internal/handlers"
 	movementCard_mock "github.com/NachoGz/switcher-backend-go/internal/movementCard/mocks"
+	websocket_mock "github.com/NachoGz/switcher-backend-go/internal/websocket/mocks"
 
 	"github.com/NachoGz/switcher-backend-go/internal/player"
 	player_mock "github.com/NachoGz/switcher-backend-go/internal/player/mocks"
@@ -29,6 +31,7 @@ func TestHandleStartGame_Success(t *testing.T) {
 	mockBoardService := new(board_mock.MockBoardService)
 	mockMovementCardService := new(movementCard_mock.MockMovementCardService)
 	mockFigureCardService := new(figureCard_mock.MockFigureCardService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -71,8 +74,14 @@ func TestHandleStartGame_Success(t *testing.T) {
 	mockFigureCardService.On("CreateFigureCardDeck", mock.Anything, gameID).
 		Return(nil)
 
+	mockWSHub.On("BroadcastEvent", uuid.Nil, "GAMES_LIST_UPDATE").
+		Return()
+
+	mockWSHub.On("BroadcastEvent", uuid.Nil, fmt.Sprintf("%s:GAME_STARTED", gameID)).
+		Return()
+
 	// Create handlers
-	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService, mockBoardService, mockMovementCardService, mockFigureCardService)
+	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService, mockBoardService, mockMovementCardService, mockFigureCardService, mockWSHub)
 
 	// Create request
 	req, _ := http.NewRequest(http.MethodPatch, "/games/start/", nil)
@@ -99,6 +108,7 @@ func TestHandleStartGame_Success(t *testing.T) {
 	mockBoardService.AssertExpectations(t)
 	mockMovementCardService.AssertExpectations(t)
 	mockFigureCardService.AssertExpectations(t)
+	mockWSHub.AssertExpectations(t)
 }
 
 func TestHandleStartGame_InvalidGameID(t *testing.T) {
@@ -108,9 +118,10 @@ func TestHandleStartGame_InvalidGameID(t *testing.T) {
 	mockBoardService := new(board_mock.MockBoardService)
 	mockMovementCardService := new(movementCard_mock.MockMovementCardService)
 	mockFigureCardService := new(figureCard_mock.MockFigureCardService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Create handlers with mock service
-	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService, mockBoardService, mockMovementCardService, mockFigureCardService)
+	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService, mockBoardService, mockMovementCardService, mockFigureCardService, mockWSHub)
 
 	// Create invalid request body
 	req, _ := http.NewRequest(http.MethodPatch, "/games/start/", nil)
@@ -138,6 +149,7 @@ func TestHandleStartGame_InvalidGameID(t *testing.T) {
 	mockBoardService.AssertNotCalled(t, "ConfigureBoard")
 	mockMovementCardService.AssertNotCalled(t, "CreateMovementCardDeck")
 	mockFigureCardService.AssertNotCalled(t, "CreateFigureCardDeck")
+	mockWSHub.AssertNotCalled(t, "BroadcastEvent")
 }
 
 func TestHandleStartGame_UpdateGameStateError(t *testing.T) {
@@ -147,6 +159,7 @@ func TestHandleStartGame_UpdateGameStateError(t *testing.T) {
 	mockBoardService := new(board_mock.MockBoardService)
 	mockMovementCardService := new(movementCard_mock.MockMovementCardService)
 	mockFigureCardService := new(figureCard_mock.MockFigureCardService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -157,7 +170,7 @@ func TestHandleStartGame_UpdateGameStateError(t *testing.T) {
 
 	// Create handlers
 	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService,
-		mockBoardService, mockMovementCardService, mockFigureCardService)
+		mockBoardService, mockMovementCardService, mockFigureCardService, mockWSHub)
 
 	// Create request
 	req, _ := http.NewRequest(http.MethodPatch, "/games/start/", nil)
@@ -186,6 +199,7 @@ func TestHandleStartGame_UpdateGameStateError(t *testing.T) {
 	mockBoardService.AssertNotCalled(t, "ConfigureBoard")
 	mockMovementCardService.AssertNotCalled(t, "CreateMovementCardDeck")
 	mockFigureCardService.AssertNotCalled(t, "CreateFigureCardDeck")
+	mockWSHub.AssertNotCalled(t, "BroadcastEvent")
 }
 
 func TestHandleStartGame_GetPlayersError(t *testing.T) {
@@ -195,6 +209,7 @@ func TestHandleStartGame_GetPlayersError(t *testing.T) {
 	mockBoardService := new(board_mock.MockBoardService)
 	mockMovementCardService := new(movementCard_mock.MockMovementCardService)
 	mockFigureCardService := new(figureCard_mock.MockFigureCardService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -207,7 +222,7 @@ func TestHandleStartGame_GetPlayersError(t *testing.T) {
 
 	// Create handlers
 	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService,
-		mockBoardService, mockMovementCardService, mockFigureCardService)
+		mockBoardService, mockMovementCardService, mockFigureCardService, mockWSHub)
 
 	// Create request
 	req, _ := http.NewRequest(http.MethodPatch, "/games/start/", nil)
@@ -235,6 +250,7 @@ func TestHandleStartGame_GetPlayersError(t *testing.T) {
 	mockBoardService.AssertNotCalled(t, "ConfigureBoard")
 	mockMovementCardService.AssertNotCalled(t, "CreateMovementCardDeck")
 	mockFigureCardService.AssertNotCalled(t, "CreateFigureCardDeck")
+	mockWSHub.AssertNotCalled(t, "BroadcastEvent")
 }
 
 func TestHandleStartGame_AssignRandomTurnError(t *testing.T) {
@@ -244,6 +260,7 @@ func TestHandleStartGame_AssignRandomTurnError(t *testing.T) {
 	mockBoardService := new(board_mock.MockBoardService)
 	mockMovementCardService := new(movementCard_mock.MockMovementCardService)
 	mockFigureCardService := new(figureCard_mock.MockFigureCardService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -259,7 +276,7 @@ func TestHandleStartGame_AssignRandomTurnError(t *testing.T) {
 
 	// Create handlers
 	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService,
-		mockBoardService, mockMovementCardService, mockFigureCardService)
+		mockBoardService, mockMovementCardService, mockFigureCardService, mockWSHub)
 
 	// Create request
 	req, _ := http.NewRequest(http.MethodPatch, "/games/start/", nil)
@@ -279,6 +296,15 @@ func TestHandleStartGame_AssignRandomTurnError(t *testing.T) {
 
 	assert.Contains(t, response, "error")
 	assert.Contains(t, response["error"], "Error setting turns")
+
+	// Verify only the necessary services were called
+	mockGameStateService.AssertExpectations(t)
+	mockPlayerService.AssertExpectations(t)
+	mockGameStateService.AssertNotCalled(t, "UpdateCurrentPlayer")
+	mockBoardService.AssertNotCalled(t, "ConfigureBoard")
+	mockMovementCardService.AssertNotCalled(t, "CreateMovementCardDeck")
+	mockFigureCardService.AssertNotCalled(t, "CreateFigureCardDeck")
+	mockWSHub.AssertNotCalled(t, "BroadcastEvent")
 }
 
 func TestHandleStartGame_UpdateCurrentPlayerError(t *testing.T) {
@@ -288,6 +314,7 @@ func TestHandleStartGame_UpdateCurrentPlayerError(t *testing.T) {
 	mockBoardService := new(board_mock.MockBoardService)
 	mockMovementCardService := new(movementCard_mock.MockMovementCardService)
 	mockFigureCardService := new(figureCard_mock.MockFigureCardService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -322,7 +349,7 @@ func TestHandleStartGame_UpdateCurrentPlayerError(t *testing.T) {
 
 	// Create handlers
 	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService,
-		mockBoardService, mockMovementCardService, mockFigureCardService)
+		mockBoardService, mockMovementCardService, mockFigureCardService, mockWSHub)
 
 	// Create request
 	req, _ := http.NewRequest(http.MethodPatch, "/games/start/", nil)
@@ -349,6 +376,7 @@ func TestHandleStartGame_UpdateCurrentPlayerError(t *testing.T) {
 	mockBoardService.AssertNotCalled(t, "ConfigureBoard")
 	mockMovementCardService.AssertNotCalled(t, "CreateMovementCardDeck")
 	mockFigureCardService.AssertNotCalled(t, "CreateFigureCardDeck")
+	mockWSHub.AssertNotCalled(t, "BroadcastEvent")
 }
 
 func TestHandleStartGame_ConfigureBoardError(t *testing.T) {
@@ -358,6 +386,7 @@ func TestHandleStartGame_ConfigureBoardError(t *testing.T) {
 	mockBoardService := new(board_mock.MockBoardService)
 	mockMovementCardService := new(movementCard_mock.MockMovementCardService)
 	mockFigureCardService := new(figureCard_mock.MockFigureCardService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -387,7 +416,7 @@ func TestHandleStartGame_ConfigureBoardError(t *testing.T) {
 
 	// Create handlers
 	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService,
-		mockBoardService, mockMovementCardService, mockFigureCardService)
+		mockBoardService, mockMovementCardService, mockFigureCardService, mockWSHub)
 
 	// Create request
 	req, _ := http.NewRequest(http.MethodPatch, "/games/start/", nil)
@@ -414,6 +443,7 @@ func TestHandleStartGame_ConfigureBoardError(t *testing.T) {
 	mockBoardService.AssertExpectations(t)
 	mockMovementCardService.AssertNotCalled(t, "CreateMovementCardDeck")
 	mockFigureCardService.AssertNotCalled(t, "CreateFigureCardDeck")
+	mockWSHub.AssertNotCalled(t, "BroadcastEvent")
 }
 
 func TestHandleStartGame_CreateMovementCardDeckError(t *testing.T) {
@@ -423,6 +453,7 @@ func TestHandleStartGame_CreateMovementCardDeckError(t *testing.T) {
 	mockBoardService := new(board_mock.MockBoardService)
 	mockMovementCardService := new(movementCard_mock.MockMovementCardService)
 	mockFigureCardService := new(figureCard_mock.MockFigureCardService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -455,7 +486,7 @@ func TestHandleStartGame_CreateMovementCardDeckError(t *testing.T) {
 
 	// Create handlers
 	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService,
-		mockBoardService, mockMovementCardService, mockFigureCardService)
+		mockBoardService, mockMovementCardService, mockFigureCardService, mockWSHub)
 
 	// Create request
 	req, _ := http.NewRequest(http.MethodPatch, "/games/start/", nil)
@@ -482,6 +513,7 @@ func TestHandleStartGame_CreateMovementCardDeckError(t *testing.T) {
 	mockBoardService.AssertExpectations(t)
 	mockMovementCardService.AssertExpectations(t)
 	mockFigureCardService.AssertNotCalled(t, "CreateFigureCardDeck")
+	mockWSHub.AssertNotCalled(t, "BroadcastEvent")
 }
 
 func TestHandleStartGame_CreateFigureCardDeckError(t *testing.T) {
@@ -491,6 +523,7 @@ func TestHandleStartGame_CreateFigureCardDeckError(t *testing.T) {
 	mockBoardService := new(board_mock.MockBoardService)
 	mockMovementCardService := new(movementCard_mock.MockMovementCardService)
 	mockFigureCardService := new(figureCard_mock.MockFigureCardService)
+	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
 	gameID := uuid.New()
@@ -526,7 +559,7 @@ func TestHandleStartGame_CreateFigureCardDeckError(t *testing.T) {
 
 	// Create handlers
 	handlers := handlers.NewGameStateHandlers(mockGameStateService, mockPlayerService,
-		mockBoardService, mockMovementCardService, mockFigureCardService)
+		mockBoardService, mockMovementCardService, mockFigureCardService, mockWSHub)
 
 	// Create request
 	req, _ := http.NewRequest(http.MethodPatch, "/games/start/", nil)
@@ -553,4 +586,5 @@ func TestHandleStartGame_CreateFigureCardDeckError(t *testing.T) {
 	mockBoardService.AssertExpectations(t)
 	mockMovementCardService.AssertExpectations(t)
 	mockFigureCardService.AssertExpectations(t)
+	mockWSHub.AssertNotCalled(t, "BroadcastEvent")
 }

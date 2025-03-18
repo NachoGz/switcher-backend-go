@@ -75,7 +75,7 @@ func (h *PlayerHandlers) HandleJoinGame(w http.ResponseWriter, r *http.Request) 
 	}
 
 	// Create player
-	_, err = h.playerService.CreatePlayer(context.Background(), player.Player{
+	player, err := h.playerService.CreatePlayer(context.Background(), player.Player{
 		Name:        params.PlayerName,
 		GameID:      gameID,
 		GameStateID: gameState.ID,
@@ -87,6 +87,10 @@ func (h *PlayerHandlers) HandleJoinGame(w http.ResponseWriter, r *http.Request) 
 	}
 
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]interface{}{
-		"message": "Joined game successfully",
+		"message":   "Joined game successfully",
+		"player_id": player.ID,
 	})
+
+	h.wsHub.BroadcastEvent(uuid.Nil, "GAMES_LIST_UPDATE")
+	h.wsHub.BroadcastEvent(uuid.Nil, fmt.Sprintf("%s:GAME_INFO_UPDATE", gameID))
 }

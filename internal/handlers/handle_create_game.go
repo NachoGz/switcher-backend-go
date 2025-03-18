@@ -8,6 +8,7 @@ import (
 	"github.com/NachoGz/switcher-backend-go/internal/game"
 	gameState "github.com/NachoGz/switcher-backend-go/internal/game_state"
 	"github.com/NachoGz/switcher-backend-go/internal/player"
+	"github.com/google/uuid"
 
 	"github.com/NachoGz/switcher-backend-go/internal/utils"
 )
@@ -47,4 +48,6 @@ func (h *GameHandlers) HandleCreateGame(w http.ResponseWriter, r *http.Request) 
 	}
 
 	utils.RespondWithJSON(w, http.StatusCreated, response)
+
+	h.wsHub.BroadcastEvent(uuid.Nil, "GAMES_LIST_UPDATE")
 }

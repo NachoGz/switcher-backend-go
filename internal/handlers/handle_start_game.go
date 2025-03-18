@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -67,4 +68,8 @@ func (h *GameStateHandlers) HandleStartGame(w http.ResponseWriter, r *http.Reque
 	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
 		"message": "Game started successfully",
 	})
+
+	h.wsHub.BroadcastEvent(uuid.Nil, "GAMES_LIST_UPDATE")
+	h.wsHub.BroadcastEvent(uuid.Nil, fmt.Sprintf("%s:GAME_STARTED", gameID))
+
 }
