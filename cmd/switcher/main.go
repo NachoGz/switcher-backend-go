@@ -78,7 +78,11 @@ func main() {
 	mux.HandleFunc("POST /games", gameHandlers.HandleCreateGame)
 	mux.HandleFunc("GET /games", gameHandlers.HandleGetGames)
 	mux.HandleFunc("GET /games/{gameID}", gameHandlers.HandleGetGameByID)
+	mux.HandleFunc("DELETE /games/{gameID}", gameHandlers.HandleDeleteGame)
+
+	// Game State routes
 	mux.HandleFunc("PATCH /game_state/start/{gameID}", gameStateHandlers.HandleStartGame)
+
 	// Player routes
 	mux.HandleFunc("POST /players/join/{gameID}", playerHandlers.HandleJoinGame)
 	mux.HandleFunc("GET /players/{gameID}", playerHandlers.HandleGetPlayers)
