@@ -13,3 +13,8 @@ WHERE game_state.state = 'waiting';
 SELECT *
 FROM games
 WHERE id = $1;
+
+-- name: DeleteGame :exec
+DELETE 
+FROM games 
+WHERE id = $1;

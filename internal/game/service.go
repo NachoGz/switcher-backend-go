@@ -154,3 +154,13 @@ func (s *Service) GetGameByID(ctx context.Context, id uuid.UUID) (*Game, error) 
 
 	return &game, nil
 }
+
+// DeleteGame deletes game with the given ID
+func (s *Service) DeleteGame(ctx context.Context, id uuid.UUID) error {
+	err := s.gameRepo.DeleteGame(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

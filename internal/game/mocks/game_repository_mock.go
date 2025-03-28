@@ -26,3 +26,8 @@ func (m *MockGameRepository) GetGameById(ctx context.Context, id uuid.UUID) (dat
 	args := m.Called(ctx, id)
 	return args.Get(0).(database.Game), args.Error(1)
 }
+
+func (m *MockGameRepository) DeleteGame(ctx context.Context, id uuid.UUID) error {
+	args := m.Called(ctx, id)
+	return args.Error(0)
+}

@@ -32,3 +32,7 @@ func (r *PostgresGameRepository) GetAvailableGames(ctx context.Context) ([]datab
 func (r PostgresGameRepository) GetGameById(ctx context.Context, id uuid.UUID) (database.Game, error) {
 	return r.queries.GetGameById(ctx, id)
 }
+
+func (r PostgresGameRepository) DeleteGame(ctx context.Context, id uuid.UUID) error {
+	return r.queries.DeleteGame(ctx, id)
+}
