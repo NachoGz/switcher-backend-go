@@ -14,6 +14,7 @@ type Player struct {
 	GameID      uuid.UUID `json:"game_id"`
 	GameStateID uuid.UUID `json:"game_state_id"`
 	Host        bool      `json:"host"`
+	Winner      bool      `json:"winner"`
 }
 
 // turnEnum
@@ -35,5 +36,6 @@ func (s *Service) DBToModel(ctx context.Context, dbPlayer database.Player) Playe
 		GameID:      dbPlayer.GameID,
 		GameStateID: dbPlayer.GameStateID,
 		Host:        dbPlayer.Host,
+		Winner:      dbPlayer.Winner,
 	}
 }
