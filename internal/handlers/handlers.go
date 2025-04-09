@@ -35,15 +35,17 @@ func NewGameStateHandlers(gameStateService gameState.GameStateService, playerSer
 
 // Handlers struct holds handlers with service dependency
 type GameHandlers struct {
-	gameService game.GameService
-	wsHub       websocket.WebSocketHub
+	gameService   game.GameService
+	playerService player.PlayerService
+	wsHub         websocket.WebSocketHub
 }
 
 // NewHandlers creates a new handlers instance
-func NewGameHandlers(gameService game.GameService, wsHub websocket.WebSocketHub) *GameHandlers {
+func NewGameHandlers(gameService game.GameService, playerService player.PlayerService, wsHub websocket.WebSocketHub) *GameHandlers {
 	return &GameHandlers{
-		gameService: gameService,
-		wsHub:       wsHub,
+		gameService:   gameService,
+		playerService: playerService,
+		wsHub:         wsHub,
 	}
 }
 
