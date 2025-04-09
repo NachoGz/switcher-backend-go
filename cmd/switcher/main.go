@@ -66,7 +66,7 @@ func main() {
 	go wsHub.Run()
 
 	// Create handlers
-	gameHandlers := handlers.NewGameHandlers(gameService, wsHub)
+	gameHandlers := handlers.NewGameHandlers(gameService, playerService, wsHub)
 	gameStateHandlers := handlers.NewGameStateHandlers(gameStateService, playerService, boardService, movementCardService, figureCardService, wsHub)
 	playerHandlers := handlers.NewPlayerHandlers(playerService, gameService, gameStateService, wsHub)
 	wsHandlers := handlers.NewWSHandlers(wsHub, gameService, playerService)
@@ -79,6 +79,7 @@ func main() {
 	mux.HandleFunc("GET /games", gameHandlers.HandleGetGames)
 	mux.HandleFunc("GET /games/{gameID}", gameHandlers.HandleGetGameByID)
 	mux.HandleFunc("DELETE /games/{gameID}", gameHandlers.HandleDeleteGame)
+	mux.HandleFunc("GET /games/{gameID}/winner", gameHandlers.HandlerGetWinner)
 
 	// Game State routes
 	mux.HandleFunc("PATCH /game_state/start/{gameID}", gameStateHandlers.HandleStartGame)

@@ -13,6 +13,7 @@ import (
 	gameState "github.com/NachoGz/switcher-backend-go/internal/game_state"
 	"github.com/NachoGz/switcher-backend-go/internal/handlers"
 	"github.com/NachoGz/switcher-backend-go/internal/player"
+	player_mock "github.com/NachoGz/switcher-backend-go/internal/player/mocks"
 	websocket_mock "github.com/NachoGz/switcher-backend-go/internal/websocket/mocks"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -22,6 +23,7 @@ import (
 func TestHandleCreateGame_Success(t *testing.T) {
 	// Setup mock
 	mockService := new(game_mock.MockGameService)
+	mockPlayerService := new(player_mock.MockPlayerService)
 	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
@@ -75,7 +77,7 @@ func TestHandleCreateGame_Success(t *testing.T) {
 		Return()
 
 	// Create handlers with mock service
-	handlers := handlers.NewGameHandlers(mockService, mockWSHub)
+	handlers := handlers.NewGameHandlers(mockService, mockPlayerService, mockWSHub)
 
 	// Create request body
 	requestBody := map[string]interface{}{
@@ -109,10 +111,11 @@ func TestHandleCreateGame_Success(t *testing.T) {
 func TestHandleCreateGame_InvalidRequestBody(t *testing.T) {
 	// Setup mock
 	mockService := new(game_mock.MockGameService)
+	mockPlayerService := new(player_mock.MockPlayerService)
 	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Create handlers with mock service
-	handlers := handlers.NewGameHandlers(mockService, mockWSHub)
+	handlers := handlers.NewGameHandlers(mockService, mockPlayerService, mockWSHub)
 
 	// Create invalid request body
 	reqBodyBytes := []byte(`{invalid json}`)
@@ -140,6 +143,7 @@ func TestHandleCreateGame_InvalidRequestBody(t *testing.T) {
 func TestHandleCreateGame_ServiceError(t *testing.T) {
 	// Setup mock
 	mockService := new(game_mock.MockGameService)
+	mockPlayerService := new(player_mock.MockPlayerService)
 	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Test data
@@ -164,7 +168,7 @@ func TestHandleCreateGame_ServiceError(t *testing.T) {
 		Return(emptyGame, emptyGameState, emptyPlayer, errors.New("service error"))
 
 	// Create handlers with mock service
-	handlers := handlers.NewGameHandlers(mockService, mockWSHub)
+	handlers := handlers.NewGameHandlers(mockService, mockPlayerService, mockWSHub)
 
 	// Create request body
 	requestBody := map[string]interface{}{

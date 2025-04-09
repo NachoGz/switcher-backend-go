@@ -40,3 +40,8 @@ func (m *MockPlayerRepository) GetPlayerByID(ctx context.Context, params databas
 	args := m.Called(ctx, params)
 	return args.Get(0).(database.Player), args.Error(1)
 }
+
+func (m *MockPlayerRepository) GetWinner(ctx context.Context, gameID uuid.UUID) (database.Player, error) {
+	args := m.Called(ctx, gameID)
+	return args.Get(0).(database.Player), args.Error(1)
+}
