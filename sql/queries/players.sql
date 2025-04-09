@@ -20,3 +20,8 @@ WHERE id=$1;
 SELECT *
 FROM players
 WHERE game_id=$1 AND id=$2;
+
+-- name: GetWinner :one
+SELECT *
+FROM players
+WHERE game_id = $1 AND winner = true limit 1;
