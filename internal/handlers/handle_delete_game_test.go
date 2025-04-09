@@ -9,6 +9,7 @@ import (
 
 	game_mock "github.com/NachoGz/switcher-backend-go/internal/game/mocks"
 	"github.com/NachoGz/switcher-backend-go/internal/handlers"
+	player_mock "github.com/NachoGz/switcher-backend-go/internal/player/mocks"
 	"github.com/NachoGz/switcher-backend-go/internal/websocket"
 	websocket_mock "github.com/NachoGz/switcher-backend-go/internal/websocket/mocks"
 	"github.com/google/uuid"
@@ -19,6 +20,7 @@ import (
 func TestHandleDeleteGame_Success(t *testing.T) {
 	// Setup mock service
 	mockService := new(game_mock.MockGameService)
+	mockPlayerService := new(player_mock.MockPlayerService)
 	mockWSHub := new(websocket_mock.MockWebSocketHub)
 
 	// Create test game
@@ -32,7 +34,7 @@ func TestHandleDeleteGame_Success(t *testing.T) {
 		Return()
 
 	// Create handlers
-	handlers := handlers.NewGameHandlers(mockService, mockWSHub)
+	handlers := handlers.NewGameHandlers(mockService, mockPlayerService, mockWSHub)
 
 	// Create request
 	req, _ := http.NewRequest(http.MethodDelete, "/games/", nil)
@@ -61,10 +63,11 @@ func TestHandleDeleteGame_Success(t *testing.T) {
 func TestHandleDeleteGame_InvalidID(t *testing.T) {
 	// Setup mock service
 	mockService := new(game_mock.MockGameService)
+	mockPlayerService := new(player_mock.MockPlayerService)
 	mockWebsocket := new(websocket.Hub)
 
 	// Create handlers
-	handlers := handlers.NewGameHandlers(mockService, mockWebsocket)
+	handlers := handlers.NewGameHandlers(mockService, mockPlayerService, mockWebsocket)
 
 	// Create request with invalid ID
 	req, _ := http.NewRequest(http.MethodDelete, "/games/", nil)
@@ -92,6 +95,7 @@ func TestHandleDeleteGame_InvalidID(t *testing.T) {
 func TestHandleDeleteGame_ServiceError(t *testing.T) {
 	// Setup mock service
 	mockService := new(game_mock.MockGameService)
+	mockPlayerService := new(player_mock.MockPlayerService)
 	mockWebsocket := new(websocket.Hub)
 	gameID := uuid.New()
 
@@ -100,7 +104,7 @@ func TestHandleDeleteGame_ServiceError(t *testing.T) {
 		Return(errors.New("database error"))
 
 	// Create handlers
-	handlers := handlers.NewGameHandlers(mockService, mockWebsocket)
+	handlers := handlers.NewGameHandlers(mockService, mockPlayerService, mockWebsocket)
 
 	// Create request with invalid ID
 	req, _ := http.NewRequest(http.MethodDelete, "/games/", nil)
