@@ -43,3 +43,7 @@ func (r *PostgresPlayerRepository) AssignTurnPlayer(ctx context.Context, params 
 func (r *PostgresPlayerRepository) GetPlayerByID(ctx context.Context, params database.GetPlayerByIDParams) (database.Player, error) {
 	return r.queries.GetPlayerByID(ctx, params)
 }
+
+func (r *PostgresPlayerRepository) GetWinner(ctx context.Context, id uuid.UUID) (database.Player, error) {
+	return r.queries.GetWinner(ctx, id)
+}

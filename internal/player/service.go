@@ -134,3 +134,14 @@ func (s *Service) GetPlayerByID(ctx context.Context, playerID uuid.UUID, gameID 
 
 	return returnPlayer, nil
 }
+
+// GetWinner fetches the winner of the game if there is one
+func (s *Service) GetWinner(ctx context.Context, id uuid.UUID) (*Player, error) {
+	dbWinner, err := s.playerRepo.GetWinner(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	winner := s.DBToModel(ctx, dbWinner)
+	return &winner, nil
+}

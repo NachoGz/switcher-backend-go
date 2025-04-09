@@ -14,6 +14,7 @@ type PlayerService interface {
 	CountPlayers(ctx context.Context, gameID uuid.UUID) (int, error)
 	GetPlayerByID(ctx context.Context, gameID uuid.UUID, playerID uuid.UUID) (Player, error)
 	GetPlayersInGame(ctx context.Context, gameID uuid.UUID) ([]Player, error)
+	GetWinner(ctx context.Context, id uuid.UUID) (*Player, error)
 }
 
 type PlayerRepository interface {
@@ -22,4 +23,5 @@ type PlayerRepository interface {
 	AssignTurnPlayer(ctx context.Context, params database.AssignTurnPlayerParams) error
 	GetPlayerByID(ctx context.Context, params database.GetPlayerByIDParams) (database.Player, error)
 	GetPlayersInGame(ctx context.Context, gameID uuid.UUID) ([]database.Player, error)
+	GetWinner(ctx context.Context, id uuid.UUID) (database.Player, error)
 }
