@@ -30,3 +30,8 @@ WHERE game_id = $1 AND player_id IS NULL;
 UPDATE movement_cards
 SET player_id = $2
 WHERE id=$1;
+
+-- name: MarkCardInPlayerHand :exec
+UPDATE movement_cards
+SET used = false
+WHERE id = $1;

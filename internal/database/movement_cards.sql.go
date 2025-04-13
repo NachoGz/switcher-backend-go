@@ -121,3 +121,14 @@ func (q *Queries) GetMovementCardDeck(ctx context.Context, gameID uuid.UUID) ([]
 	}
 	return items, nil
 }
+
+const markCardInPlayerHand = `-- name: MarkCardInPlayerHand :exec
+UPDATE movement_cards
+SET used = false
+WHERE id = $1
+`
+
+func (q *Queries) MarkCardInPlayerHand(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, markCardInPlayerHand, id)
+	return err
+}
