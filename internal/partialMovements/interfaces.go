@@ -2,13 +2,14 @@ package partialMovements
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/NachoGz/switcher-backend-go/internal/database"
 	"github.com/google/uuid"
 )
 
 type PartialMovementService interface {
-	RevertPartialMovements(ctx context.Context, gameID, playerID uuid.UUID) error
+	RevertPartialMovements(ctx context.Context, db *sql.DB, gameID, playerID uuid.UUID) error
 }
 
 type PartialMovementRepository interface {
