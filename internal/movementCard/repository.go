@@ -33,3 +33,7 @@ func (r *PostgresMovementCardRepository) GetMovementCardDeck(ctx context.Context
 func (r *PostgresMovementCardRepository) AssignMovementCard(ctx context.Context, params database.AssignMovementCardParams) error {
 	return r.queries.AssignMovementCard(ctx, params)
 }
+
+func (r *PostgresMovementCardRepository) MarkCardInPlayerHand(ctx context.Context, cardID uuid.UUID) error {
+	return r.queries.MarkCardInPlayerHand(ctx, cardID)
+}
