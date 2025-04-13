@@ -2,6 +2,7 @@ package board
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/NachoGz/switcher-backend-go/internal/database"
 	"github.com/google/uuid"
@@ -32,4 +33,21 @@ func (r *PostgresBoardRepository) GetBoard(ctx context.Context, gameID uuid.UUID
 // AddBoxToBoard creates a new box within the board
 func (r *PostgresBoardRepository) AddBoxToBoard(ctx context.Context, params database.AddBoxToBoardParams) (database.Box, error) {
 	return r.queries.AddBoxToBoard(ctx, params)
+}
+
+// GetBox fetches a box for a specific game in the given position
+func (r *PostgresBoardRepository) GetBox(ctx context.Context, params database.GetBoxParams) (database.Box, error) {
+	return r.queries.GetBox(ctx, params)
+}
+
+// SwitchBoxes switches the color of two colors
+func (r *PostgresBoardRepository) ChangeBoxColor(ctx context.Context, params database.ChangeBoxColorParams) error {
+	return r.queries.ChangeBoxColor(ctx, params)
+}
+
+// WithTx returns a new instance of the BoardRepository that uses transaction provided by sqlc
+func (r *PostgresBoardRepository) WithTx(tx *sql.Tx) BoardRepository {
+	return &PostgresBoardRepository{
+		queries: r.queries.WithTx(tx),
+	}
 }
