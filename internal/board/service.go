@@ -120,6 +120,7 @@ func (s *Service) SwapColors(ctx context.Context, gameID uuid.UUID, posFrom, pos
 	return nil
 }
 
+// WithTx returns a new instance of the BoardService with transaction-aware repositories
 func (s *Service) WithTx(tx *sql.Tx) BoardService {
 	return &Service{
 		boardRepo: s.boardRepo.WithTx(tx),
