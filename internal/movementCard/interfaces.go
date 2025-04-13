@@ -11,6 +11,7 @@ type MovementCardRepository interface {
 	CreateMovementCard(ctx context.Context, params database.CreateMovementCardParams) (database.MovementCard, error)
 	GetMovementCardDeck(ctx context.Context, gameID uuid.UUID) ([]database.MovementCard, error)
 	AssignMovementCard(ctx context.Context, params database.AssignMovementCardParams) error
+	MarkCardInPlayerHand(ctx context.Context, cardID uuid.UUID) error
 }
 
 type MovementCardService interface {
