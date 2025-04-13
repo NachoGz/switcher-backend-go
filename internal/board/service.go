@@ -82,3 +82,46 @@ func (s *Service) ConfigureBoard(ctx context.Context, gameID uuid.UUID) error {
 	}
 	return nil
 }
+
+func (s *Service) SwapColors(ctx context.Context, gameID uuid.UUID, posFrom, posTo BoardPosition) error {
+	boxFrom, err := s.boardRepo.GetBox(ctx, database.GetBoxParams{
+		GameID: gameID,
+		PosX:   int32(posFrom.PosX),
+		PosY:   int32(posFrom.PosY),
+	})
+	if err != nil {
+		return err
+	}
+
+	boxTo, err := s.boardRepo.GetBox(ctx, database.GetBoxParams{
+		GameID: gameID,
+		PosX:   int32(posTo.PosX),
+		PosY:   int32(posTo.PosY),
+	})
+	if err != nil {
+		return err
+	}
+
+	// Switch colors
+	if err := s.boardRepo.ChangeBoxColor(ctx, database.ChangeBoxColorParams{
+		ID:    boxFrom.ID,
+		Color: boxTo.Color,
+	}); err != nil {
+		return err
+	}
+
+	if err := s.boardRepo.ChangeBoxColor(ctx, database.ChangeBoxColorParams{
+		ID:    boxTo.ID,
+		Color: boxFrom.Color,
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Service) WithTx(tx *sql.Tx) BoardService {
+	return &Service{
+		boardRepo: s.boardRepo.WithTx(tx),
+	}
+}
