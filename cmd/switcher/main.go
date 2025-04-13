@@ -49,7 +49,7 @@ func main() {
 	gameRepo := game.NewGameRepository(dbQueries)
 	gameStateRepo := gameState.NewGameStateRepository(dbQueries)
 	playerRepo := player.NewPlayerRepository(dbQueries)
-	boardRepo := board.NewBoardRepository(dbQueries)
+	boardRepo := board.NewBoardRepository(dbQueries, dbConn)
 	movementCardRepo := movementCard.NewMovementCardRepository(dbQueries)
 	figureCardRepo := figureCard.NewFigureCardRepository(dbQueries)
 

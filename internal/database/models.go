@@ -72,6 +72,19 @@ type MovementCard struct {
 	Position    sql.NullInt32
 }
 
+type PartialMovement struct {
+	ID             uuid.UUID
+	PosFromX       int32
+	PosFromY       int32
+	PosToX         int32
+	PosToY         int32
+	GameID         uuid.UUID
+	PlayerID       uuid.UUID
+	MovementCardID uuid.UUID
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+}
+
 type Player struct {
 	ID          uuid.UUID
 	Name        string

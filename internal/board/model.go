@@ -42,3 +42,8 @@ type BoardAndBoxesOut struct {
 	Boxes         [][]BoxOut `json:"boxes"`
 	FormedFigures [][]BoxOut `json:"formed_figures"`
 }
+
+type BoardPosition struct {
+	PosX int `json:"pos_x"`
+	PosY int `json:"pos_y"`
+}
