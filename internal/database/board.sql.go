@@ -53,6 +53,22 @@ func (q *Queries) AddBoxToBoard(ctx context.Context, arg AddBoxToBoardParams) (B
 	return i, err
 }
 
+const changeBoxColor = `-- name: ChangeBoxColor :exec
+UPDATE boxes
+SET color = $2
+WHERE id = $1
+`
+
+type ChangeBoxColorParams struct {
+	ID    uuid.UUID
+	Color string
+}
+
+func (q *Queries) ChangeBoxColor(ctx context.Context, arg ChangeBoxColorParams) error {
+	_, err := q.db.ExecContext(ctx, changeBoxColor, arg.ID, arg.Color)
+	return err
+}
+
 const createBoard = `-- name: CreateBoard :one
 INSERT INTO
 	boards (id, game_id)
@@ -91,6 +107,35 @@ func (q *Queries) GetBoard(ctx context.Context, gameID uuid.UUID) (Board, error)
 		&i.GameID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getBox = `-- name: GetBox :one
+SELECT id, color, pos_x, pos_y, game_id, board_id, highlight, figure_id, figure_type
+FROM boxes
+WHERE game_id = $1 AND pos_x = $2 AND pos_y = $3
+`
+
+type GetBoxParams struct {
+	GameID uuid.UUID
+	PosX   int32
+	PosY   int32
+}
+
+func (q *Queries) GetBox(ctx context.Context, arg GetBoxParams) (Box, error) {
+	row := q.db.QueryRowContext(ctx, getBox, arg.GameID, arg.PosX, arg.PosY)
+	var i Box
+	err := row.Scan(
+		&i.ID,
+		&i.Color,
+		&i.PosX,
+		&i.PosY,
+		&i.GameID,
+		&i.BoardID,
+		&i.Highlight,
+		&i.FigureID,
+		&i.FigureType,
 	)
 	return i, err
 }
