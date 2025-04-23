@@ -47,7 +47,7 @@ func TestHandleGetGames_Success(t *testing.T) {
 	}
 
 	// Set up mock expectations, default parameters
-	mockService.On("GetAvailableGames", mock.Anything, 1, 1, 5, "").
+	mockService.On("GetAvailableGames", mock.Anything, 0, 1, 5, "").
 		Return(games, 2, nil)
 
 	// Create handlers
@@ -146,7 +146,7 @@ func TestHandleGetGames_ServiceError(t *testing.T) {
 	mockWebsocket := new(websocket.Hub)
 
 	// Setup expectations with error
-	mockService.On("GetAvailableGames", mock.Anything, 1, 1, 5, "").
+	mockService.On("GetAvailableGames", mock.Anything, 0, 1, 5, "").
 		Return([]game.Game{}, 0, errors.New("database error"))
 
 	// Create handler
