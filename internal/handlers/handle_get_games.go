@@ -35,8 +35,9 @@ func (h *GameHandlers) HandleGetGames(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// filters
-	numPlayers := 1 // 1 means no filter
+	numPlayers := 0 // 0 means no filter
 	if numPlayersStr := r.URL.Query().Get("num_players"); numPlayersStr != "" {
+		log.Println("num_players:", numPlayersStr)
 		numPlayersVal, err := strconv.Atoi(numPlayersStr)
 		if err != nil || numPlayersVal < 0 {
 			utils.RespondWithError(w, http.StatusBadRequest, "Invalid number of players", err)
