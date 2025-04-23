@@ -3,6 +3,7 @@ package game
 import (
 	"context"
 	"database/sql"
+	"log"
 	"strings"
 
 	"github.com/NachoGz/switcher-backend-go/internal/database"
@@ -42,7 +43,7 @@ func NewService(
 var _ GameService = (*Service)(nil)
 
 // GetAvailableGames gets all available games with player counts
-func (s *Service) GetAvailableGames(ctx context.Context, numPlayers int, page int, limit int, name string) ([]Game, int, error) {
+func (s *Service) GetAvailableGames(ctx context.Context, numPlayers, page, limit int, name string) ([]Game, int, error) {
 	dbGames, err := s.gameRepo.GetAvailableGames(ctx)
 	if err != nil {
 		return nil, 0, err
@@ -55,8 +56,15 @@ func (s *Service) GetAvailableGames(ctx context.Context, numPlayers int, page in
 		game := s.DBToModel(ctx, dbGame)
 
 		// Filter by number of players if needed
-		if game.PlayersCount == numPlayers && strings.Contains(game.Name, name) {
-			filteredGames = append(filteredGames, game)
+		log.Println(numPlayers)
+		if numPlayers != 0 {
+			if game.PlayersCount == numPlayers && strings.Contains(game.Name, name) {
+				filteredGames = append(filteredGames, game)
+			}
+		} else {
+			if strings.Contains(game.Name, name) {
+				filteredGames = append(filteredGames, game)
+			}
 		}
 	}
 
